@@ -1,5 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_timezone/flutter_timezone.dart';
+// import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest.dart';
 import 'package:timezone/timezone.dart';
 
@@ -14,7 +14,8 @@ class NotificationService {
 
   Future<void> init() async {
     initializeTimeZones();
-    final localTimeZone = await FlutterTimezone.getLocalTimezone();
+    // final localTimeZone = await FlutterTimezone.getLocalTimezone();
+    final localTimeZone = 'Europe/Kyiv';
     location = getLocation(localTimeZone);
     setLocalLocation(location!);
 
@@ -37,7 +38,7 @@ class NotificationService {
         ?.requestNotificationsPermission();
   }
 
-  void cancelNotification(int id) async {
+  Future<void> cancelNotification(int id) async {
     await notificationsPlugin.cancel(id);
   }
 

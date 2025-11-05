@@ -1,0 +1,1 @@
+enum ReminderFormType { add, edit }

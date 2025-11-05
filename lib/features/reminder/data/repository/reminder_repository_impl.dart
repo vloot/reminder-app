@@ -1,5 +1,6 @@
 import 'package:reminders_app/features/reminder/data/datasource/reminders_datasource.dart';
 import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
+import 'package:reminders_app/features/reminder/domain/entities/reminder_entity.dart';
 import 'package:reminders_app/features/reminder/domain/repository/reminder_repository.dart';
 
 class ReminderRepositoryImpl extends ReminderRepository {
@@ -8,17 +9,19 @@ class ReminderRepositoryImpl extends ReminderRepository {
   ReminderRepositoryImpl({required this.datasource});
 
   @override
-  Future<int> addReminder(ReminderModel reminder) async {
-    reminder = reminder.copyWith(time: _setTime(reminder.time));
-    return await datasource.addReminder(
-      reminder,
-    ); // TODO refactor this, so that datasource does not care about model
+  Future<int> addReminder(ReminderEntity entity) async {
+    final reminder = ReminderModel(
+      title: entity.title,
+      description: entity.description,
+      time: entity.time,
+      reminderDays: entity.reminderDays,
+    );
+    return await datasource.addReminder(reminder);
   }
 
   @override
-  Future<ReminderModel> editReminder(ReminderModel reminder) {
-    // TODO: implement editReminder
-    throw UnimplementedError();
+  Future<ReminderModel> editReminder(ReminderEntity reminder) async {
+    return await datasource.updateReminder(ReminderModel.fromEntity(reminder));
   }
 
   @override
@@ -32,13 +35,7 @@ class ReminderRepositoryImpl extends ReminderRepository {
   }
 
   @override
-  Future<ReminderModel> removeReminder(int id) async {
-    // TODO: implement removeReminder
-    throw UnimplementedError();
-  }
-
-  DateTime _setTime(DateTime time) {
-    var notiTime = DateTime(2000);
-    return notiTime.add(Duration(hours: time.hour, minutes: time.minute));
+  Future<int> deleteReminder(ReminderModel reminder) async {
+    return await datasource.deleteReminder(reminder.id!);
   }
 }

@@ -44,8 +44,6 @@ class _NotiTestClassState extends State<NotiTestClass> {
           AndroidFlutterLocalNotificationsPlugin
         >()
         ?.requestNotificationsPermission();
-
-    print("Init doooone");
   }
 
   Future<void> sentInstantNoti() async {
@@ -100,7 +98,6 @@ class _NotiTestClassState extends State<NotiTestClass> {
     return Scaffold(
       floatingActionButton: IconButton(
         onPressed: () async {
-          print("eh?");
           await sentInstantNoti();
         },
         icon: Icon(Icons.notifications_active_outlined),

@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:reminders_app/core/infrastructure/database.dart';
+import 'package:reminders_app/features/reminder/domain/entities/reminder_entity.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 
 class ReminderModel {
@@ -36,6 +37,16 @@ class ReminderModel {
     );
   }
 
+  factory ReminderModel.fromEntity(ReminderEntity entity) {
+    return ReminderModel(
+      id: entity.id,
+      title: entity.title,
+      description: entity.description,
+      time: entity.time,
+      reminderDays: entity.reminderDays,
+    );
+  }
+
   ReminderModel copyWith({
     int? id,
     String? title,
@@ -49,6 +60,16 @@ class ReminderModel {
       description: description ?? this.description,
       time: time ?? this.time,
       reminderDays: reminderDays ?? this.reminderDays,
+    );
+  }
+
+  ReminderEntity toEntity() {
+    return ReminderEntity(
+      id: id ?? -1,
+      title: title,
+      description: description ?? '',
+      time: time,
+      reminderDays: reminderDays,
     );
   }
 }

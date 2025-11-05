@@ -1,14 +1,14 @@
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 
-class AddReminderEvent {}
-
-class SubmitReminderEvent extends AddReminderEvent {
+class ReminderEntity {
+  final int id;
   final String title;
   final String description;
   final DateTime time;
   final Set<Weekday> reminderDays;
 
-  SubmitReminderEvent({
+  ReminderEntity({
+    required this.id,
     required this.title,
     required this.description,
     required this.time,

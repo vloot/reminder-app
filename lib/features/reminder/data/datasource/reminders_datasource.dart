@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:drift/drift.dart';
 import 'package:reminders_app/core/infrastructure/database.dart';
 import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
@@ -83,5 +85,45 @@ class RemindersDatasource {
     });
 
     return id;
+  }
+
+  Future<int> deleteReminder(int id) async {
+    await (database.delete(
+      database.reminderWeekdaysTable,
+    )..where((t) => t.reminderID.equals(id))).go();
+
+    return await (database.delete(
+      database.reminderTable,
+    )..where((t) => t.id.equals(id))).go();
+  }
+
+  Future<ReminderModel> updateReminder(ReminderModel reminder) async {
+    if (reminder.id == null) {
+      return reminder;
+    }
+
+    await database.transaction(() async {
+      await (database.update(database.reminderTable)
+            ..where((tbl) => tbl.id.equals(reminder.id ?? -1)))
+          .write(reminder.toCompanion());
+    });
+
+    await (database.delete(
+      database.reminderWeekdaysTable,
+    )..where((tbl) => tbl.reminderID.equals(reminder.id ?? -1))).go();
+
+    await database.batch((batch) {
+      batch.insertAll(
+        database.reminderWeekdaysTable,
+        reminder.reminderDays.map((e) {
+          return ReminderWeekdaysTableCompanion(
+            reminderID: Value(reminder.id ?? -1),
+            weekday: Value(e.index),
+          );
+        }),
+      );
+    });
+
+    return reminder;
   }
 }

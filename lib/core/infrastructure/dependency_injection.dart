@@ -6,8 +6,8 @@ import 'package:reminders_app/features/notifications/domain/notification_reposit
 import 'package:reminders_app/features/reminder/data/datasource/reminders_datasource.dart';
 import 'package:reminders_app/features/reminder/data/repository/reminder_repository_impl.dart';
 import 'package:reminders_app/features/reminder/domain/repository/reminder_repository.dart';
-import 'package:reminders_app/features/reminder/presentation/add_reminder/add_reminder_bloc.dart';
-import 'package:reminders_app/features/reminder/presentation/list_reminders/reminder_bloc.dart';
+import 'package:reminders_app/features/reminder/presentation/reminder/reminder_bloc.dart';
+import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_bloc.dart';
 
 var getIt = GetIt.instance;
 
@@ -27,12 +27,12 @@ void setupDI() {
     () => ReminderRepositoryImpl(datasource: getIt<RemindersDatasource>()),
   );
   getIt.registerFactory(
-    () => RemindersBloc(reminderRepository: getIt<ReminderRepository>()),
+    () => RemindersListBloc(reminderRepository: getIt<ReminderRepository>()),
   );
 
-  // Add reminders
+  // Reminder bloc
   getIt.registerFactory(
-    () => AddReminderBloc(
+    () => ReminderBloc(
       reminderRepository: getIt<ReminderRepository>(),
       notificationRepository: getIt<NotificationRepository>(),
     ),

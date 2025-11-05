@@ -3,25 +3,26 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminders_app/core/shared/request_status.dart';
 import 'package:reminders_app/features/reminder/domain/repository/reminder_repository.dart';
-import 'package:reminders_app/features/reminder/presentation/list_reminders/reminder_event.dart';
-import 'package:reminders_app/features/reminder/presentation/list_reminders/reminder_state.dart';
+import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_event.dart';
+import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_state.dart';
 
-class RemindersBloc extends Bloc<ReminderEvent, RemindersState> {
+class RemindersListBloc extends Bloc<RemindersListEvent, RemindersListState> {
   final ReminderRepository reminderRepository;
 
-  RemindersBloc({required this.reminderRepository})
-    : super(RemindersState.init()) {
-    on<GetRemindersEvent>(onGetRemindersEvent);
+  RemindersListBloc({required this.reminderRepository})
+    : super(RemindersListState.init()) {
+    on<GetRemindersListEvent>(onGetRemindersEvent);
   }
 
   FutureOr<void> onGetRemindersEvent(
-    GetRemindersEvent event,
-    Emitter<RemindersState> emit,
+    GetRemindersListEvent event,
+    Emitter<RemindersListState> emit,
   ) async {
     emit(state.copyWith(status: RequestStatus.loading));
-
+    print('onGetRemindersEvent');
     try {
       var res = await reminderRepository.getReminders();
+      res.sort((a, b) => a.time.compareTo(b.time));
       emit(state.copyWith(status: RequestStatus.done, reminder: res));
     } catch (e) {
       emit(state.copyWith(status: RequestStatus.error, error: e.toString()));

@@ -9,8 +9,10 @@ class NotificationRepositoryImpl extends NotificationRepository {
   NotificationRepositoryImpl({required this.notificationService});
 
   @override
-  void cancelNotification(ReminderModel reminder) {
-    notificationService.cancelNotification(reminder.id!);
+  Future<void> cancelNotification(ReminderModel reminder) async {
+    for (var date in reminder.getReminderDates()) {
+      await notificationService.cancelNotification(_calculateID(reminder.id ?? -1, date.weekday - 1));
+    }
   }
 
   @override
@@ -35,7 +37,7 @@ class NotificationRepositoryImpl extends NotificationRepository {
     );
   }
 
-  int _calculateID(int id, int weekdayID) {
-    return id * 10 + weekdayID + 1;
+  int _calculateID(int reminderID, int weekdayID) {
+    return reminderID * 10 + weekdayID + 1;
   }
 }
