@@ -102,6 +102,8 @@ class _ReminderFormState extends State<ReminderForm> {
                   reminderDays: selectedDays,
                 ),
               );
+
+              Navigator.pop(context);
             },
             style: ButtonStyle(
               backgroundColor: WidgetStateProperty.all(

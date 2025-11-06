@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminders_app/core/infrastructure/dependency_injection.dart';
 import 'package:reminders_app/core/shared/request_status.dart';
 import 'package:reminders_app/core/themes/themes.dart';
-import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_event.dart';
@@ -12,10 +10,10 @@ import 'package:reminders_app/features/reminder/presentation/reminder/reminder_s
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_event.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_state.dart';
-import 'package:reminders_app/features/reminder/presentation/widgets/confirmation.dart';
+import 'package:reminders_app/features/reminder/presentation/widgets/reminder_list_tile.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
-import 'package:reminders_app/features/weekday_box/presentation/weekday_box.dart';
+import 'package:reminders_app/features/weekday_box/presentation/widgets/weekday_box.dart';
 
 class ReminderPage extends StatelessWidget {
   const ReminderPage({super.key});
@@ -215,7 +213,7 @@ class ReminderPage extends StatelessWidget {
                           vertical: 5,
                           horizontal: 20,
                         ),
-                        child: buildListTile(
+                        child: ReminderListTile(
                           todayReminders![index],
                           context,
                           innderContext,
@@ -231,172 +229,6 @@ class ReminderPage extends StatelessWidget {
 
         return SliverToBoxAdapter(child: Text("Unknown error"));
       },
-    );
-  }
-
-  Widget buildListTile(
-    ReminderModel reminder,
-    BuildContext buildContext,
-    BuildContext innerContext,
-  ) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: currentTheme.secondaryColor,
-        border: Border.all(color: Colors.transparent),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Theme(
-          data: Theme.of(buildContext).copyWith(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-          ),
-          child: ExpansionTile(
-            initiallyExpanded: false,
-            shape: const Border(),
-            leading: IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.check_circle,
-                size: 30,
-                color: currentTheme.primaryColorAccent,
-              ),
-            ),
-            title: Text(reminder.title),
-            trailing: Text(
-              '${reminder.time.hour}:${(reminder.time.minute).toString().padLeft(2, '0')}',
-              style: TextStyle(color: currentTheme.textColor, fontSize: 14),
-            ),
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(color: Colors.black12, width: 1),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(50, 0, 20, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      reminder.description ?? '',
-                      style: TextStyle(
-                        color: currentTheme.textColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: buildContext,
-                              showDragHandle: true,
-                              builder: (context) {
-                                return ReminderForm(
-                                  ReminderFormType.edit,
-                                  'Editing',
-                                  buildContext,
-                                  (newReminder) {
-                                    innerContext.read<ReminderBloc>().add(
-                                      EditReminderEvent(
-                                        id: newReminder.id!,
-                                        title: newReminder.title,
-                                        description:
-                                            newReminder.description ?? '',
-                                        time: newReminder.time,
-                                        reminderDays: newReminder.reminderDays,
-                                      ),
-                                    );
-                                  },
-                                  reminderModel: reminder,
-                                );
-                              },
-                            );
-                          },
-                          icon: Icon(Icons.edit_note_rounded),
-                          color: Colors.green,
-                        ),
-                        IconButton(
-                          onPressed: () async {
-                            print(1);
-                            GestureDetector(
-                              onTapDown: (details) {
-                                print('qwe');
-                                final tapPosition = details.globalPosition;
-                                showMenu(
-                                  // deletion
-                                  position: RelativeRect.fromLTRB(
-                                    tapPosition.dx,
-                                    tapPosition.dy,
-                                    0,
-                                    0,
-                                  ), // position near tap
-                                  context: buildContext,
-                                  items: [
-                                    PopupMenuItem(
-                                      child: Text("Delete?"),
-                                      value: true,
-                                    ),
-                                  ],
-                                  // builder: (context) {
-                                  //   return TextButton(
-                                  //     onPressed: () => {},
-                                  //     child: Text('data'),
-                                  //   );
-                                  //   // return Confirmation(
-                                  //   //   () async {
-                                  //   //     // BlocListener()
-                                  //   //     print('confirm');
-                                  //   //     innerContext.read<ReminderBloc>().add(
-                                  //   //       DeleteReminderEvent(reminder: reminder),
-                                  //   //     );
-                                  //   //     print('after event');
-                                  //   //     buildContext.read<RemindersListBloc>().add(
-                                  //   //       GetRemindersListEvent(),
-                                  //   //     );
-                                  //   //   },
-                                  //   //   () async {
-                                  //   //     print('cancel');
-                                  //   //   },
-                                  //   // );
-                                  // },
-                                );
-                              },
-                              child: Icon(Icons.delete, color: Colors.blue),
-                            );
-                          },
-                          color: Colors.redAccent,
-                          icon: Icon(Icons.delete_outline_sharp),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
