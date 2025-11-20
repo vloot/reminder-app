@@ -9,6 +9,7 @@ class AppTheme {
   final Color warningColor;
   final Color backgroundColor;
   final Color textColor;
+  final Color transparent;
 
   AppTheme({
     required this.primaryColor,
@@ -19,5 +20,6 @@ class AppTheme {
     required this.warningColor,
     required this.backgroundColor,
     required this.textColor,
+    required this.transparent,
   });
 }

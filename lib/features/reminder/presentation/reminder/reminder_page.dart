@@ -13,7 +13,7 @@ import 'package:reminders_app/features/reminder/presentation/reminders_list/remi
 import 'package:reminders_app/features/reminder/presentation/widgets/reminder_list_tile.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
-import 'package:reminders_app/features/weekday_box/presentation/widgets/weekday_box.dart';
+import 'package:reminders_app/features/weekday_box/presentation/weekday_box_page.dart';
 
 class ReminderPage extends StatelessWidget {
   const ReminderPage({super.key});
@@ -36,7 +36,7 @@ class ReminderPage extends StatelessWidget {
       backgroundColor: currentTheme.backgroundColor,
       body: CustomScrollView(
         slivers: [
-          buildAppBar(),
+          buildAppBar(parentContext),
           SliverToBoxAdapter(
             child: SizedBox(
               height: 40,
@@ -121,37 +121,45 @@ class ReminderPage extends StatelessWidget {
     );
   }
 
-  SliverAppBar buildAppBar() {
+  SliverAppBar buildAppBar(BuildContext parentContext) {
+    final size = MediaQuery.of(parentContext).size;
     return SliverAppBar(
-      title: Text(
-        'RemindMe',
-        style: TextStyle(
-          color: currentTheme.secondaryColor,
-          fontWeight: FontWeight.bold,
-          fontSize: 26,
+      title: Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: Text(
+          'RemindMe',
+          style: TextStyle(
+            color: currentTheme.secondaryColor,
+            fontWeight: FontWeight.bold,
+            fontSize: 26,
+          ),
         ),
       ),
+      centerTitle: true,
       toolbarHeight: 40,
-      expandedHeight: 170,
+      expandedHeight: size.height * 0.26,
       collapsedHeight: 50,
       pinned: true,
-      flexibleSpace: buildFlexibleSpace(),
+      flexibleSpace: buildFlexibleSpace(parentContext, size),
       backgroundColor: currentTheme.primaryColor,
     );
   }
 
-  FlexibleSpaceBar buildFlexibleSpace() {
+  FlexibleSpaceBar buildFlexibleSpace(BuildContext parentContext, Size size) {
     return FlexibleSpaceBar(
       background: Material(
         color: currentTheme.backgroundColor,
         child: Stack(
           children: [
             Container(
-              constraints: BoxConstraints.expand(height: 200),
+              constraints: BoxConstraints.expand(height: size.height * 0.2),
               decoration: BoxDecoration(
                 color: currentTheme.primaryColor,
                 border: Border.symmetric(
-                  vertical: BorderSide(color: Colors.transparent, width: 2),
+                  vertical: BorderSide(
+                    color: currentTheme.primaryColor,
+                    width: 2,
+                  ),
                 ),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(32),
@@ -159,7 +167,21 @@ class ReminderPage extends StatelessWidget {
                 ),
               ),
             ),
-            WeekdayBox(),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    // color: currentTheme.backgroundColor,
+                  ),
+                  constraints: BoxConstraints.expand(
+                    height: size.height * 0.12,
+                  ),
+                ),
+                WeekdayBox(),
+              ],
+            ),
           ],
         ),
       ),
@@ -203,7 +225,6 @@ class ReminderPage extends StatelessWidget {
                       parentContext.read<RemindersListBloc>().add(
                         GetRemindersListEvent(),
                       );
-                      // Navigator.pop(context);
                     }
                   },
                   child: BlocBuilder<ReminderBloc, ReminderState>(

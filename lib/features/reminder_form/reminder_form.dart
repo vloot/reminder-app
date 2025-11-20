@@ -102,8 +102,6 @@ class _ReminderFormState extends State<ReminderForm> {
                   reminderDays: selectedDays,
                 ),
               );
-
-              Navigator.pop(context);
             },
             style: ButtonStyle(
               backgroundColor: WidgetStateProperty.all(
@@ -166,7 +164,11 @@ class _ReminderFormState extends State<ReminderForm> {
           initialTime: _time,
         );
         setState(() {
-          _time = time ?? TimeOfDay.fromDateTime(widget.reminderModel!.time);
+          _time =
+              time ??
+              TimeOfDay.fromDateTime(
+                widget.reminderModel?.time ?? DateTime.now(),
+              );
         });
       },
       child: Row(

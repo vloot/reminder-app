@@ -10,6 +10,7 @@ final orangeLightTheme = AppTheme(
   warningColor: Colors.redAccent,
   backgroundColor: Color.from(alpha: 1, red: 95, green: 0.95, blue: 0.95),
   textColor: Colors.black,
+  transparent: Colors.transparent,
 );
 
 AppTheme currentTheme = orangeLightTheme;
