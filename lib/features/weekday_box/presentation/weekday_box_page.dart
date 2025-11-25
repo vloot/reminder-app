@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminders_app/core/themes/themes.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
+import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_bloc.dart';
+import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_event.dart';
 
-class WeekdayBox extends StatelessWidget {
-  const WeekdayBox({Key? key}) : super(key: key);
+class WeekdayBox extends StatefulWidget {
+  final Weekday weekday;
+  WeekdayBox(this.weekday, {Key? key}) : super(key: key);
+
+  @override
+  _WeekdayBoxState createState() => _WeekdayBoxState();
+}
+
+class _WeekdayBoxState extends State<WeekdayBox> {
+  final Set<Weekday> selectedDays = {};
 
   @override
   Widget build(BuildContext context) {
@@ -16,37 +27,44 @@ class WeekdayBox extends StatelessWidget {
       buildDayCircle(
         parentContext,
         'M',
-        isActive: today == Weekday.monday.index,
+        Weekday.monday,
+        isToday: today == Weekday.monday.index,
       ),
       buildDayCircle(
         parentContext,
         'T',
-        isActive: today == Weekday.tuesday.index,
+        Weekday.tuesday,
+        isToday: today == Weekday.tuesday.index,
       ),
       buildDayCircle(
         parentContext,
         'W',
-        isActive: today == Weekday.wednesday.index,
+        Weekday.wednesday,
+        isToday: today == Weekday.wednesday.index,
       ),
       buildDayCircle(
         parentContext,
         'T',
-        isActive: today == Weekday.thursday.index,
+        Weekday.thursday,
+        isToday: today == Weekday.thursday.index,
       ),
       buildDayCircle(
         parentContext,
         'F',
-        isActive: today == Weekday.friday.index,
+        Weekday.friday,
+        isToday: today == Weekday.friday.index,
       ),
       buildDayCircle(
         parentContext,
         'S',
-        isActive: today == Weekday.saturday.index,
+        Weekday.saturday,
+        isToday: today == Weekday.saturday.index,
       ),
       buildDayCircle(
         parentContext,
         'S',
-        isActive: today == Weekday.sunday.index,
+        Weekday.sunday,
+        isToday: today == Weekday.sunday.index,
       ),
     ];
 
@@ -62,49 +80,7 @@ class WeekdayBox extends StatelessWidget {
               children: [
                 Stack(
                   children: [
-                    Container(
-                      height: 138,
-                      // color: Colors.lime,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 75),
-                            child: Center(
-                              child: Container(
-                                height: 100,
-                                padding: EdgeInsets.only(bottom: 6.5),
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: currentTheme.inactiveColor,
-                                      spreadRadius: 0.1,
-                                      blurRadius: 10,
-                                      offset: Offset(0, 0),
-                                    ),
-                                  ],
-                                  color: currentTheme.secondaryColor,
-                                  borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(32),
-                                    bottomRight: Radius.circular(32),
-                                  ),
-                                ),
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    selectorText('All        ', isActive: true),
-                                    selectorText('Selected day'),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    buildViewSelector(context),
                     Positioned(
                       top: 0,
                       left: 20,
@@ -140,15 +116,6 @@ class WeekdayBox extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            Positioned(
-                              right: 7,
-                              top: 5,
-                              child: Icon(
-                                size: 20,
-                                Icons.settings,
-                                color: currentTheme.inactiveColor,
-                              ),
-                            ),
                           ],
                         ),
                       ),
@@ -163,7 +130,61 @@ class WeekdayBox extends StatelessWidget {
     );
   }
 
-  Text selectorText(String text, {bool isActive = false}) {
+  Widget buildViewSelector(BuildContext parentContext) {
+    return SizedBox(
+      height: 145,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 75, right: 75),
+            child: Center(
+              child: Container(
+                height: 100,
+                padding: EdgeInsets.only(bottom: 0),
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: currentTheme.inactiveColor,
+                      spreadRadius: 0.1,
+                      blurRadius: 10,
+                      offset: Offset(0, 0),
+                    ),
+                  ],
+                  color: currentTheme.secondaryColor,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(16),
+                    bottomRight: Radius.circular(16),
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    selectorButton(
+                      'All',
+                      () => parentContext.read<RemindersListBloc>().add(
+                        GetRemindersListEvent(),
+                      ),
+                      isActive: false,
+                    ),
+                    selectorButton('Selected day', () => {}, isActive: true),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  TextButton selectorButton(
+    String text,
+    void Function() onPressed, {
+    bool isActive = false,
+  }) {
     final textStyle = TextStyle(
       decoration: TextDecoration.combine([TextDecoration.underline]),
       decorationThickness: 3,
@@ -174,25 +195,38 @@ class WeekdayBox extends StatelessWidget {
       fontSize: 15,
       fontWeight: FontWeight.w700,
       shadows: <Shadow>[
-        Shadow(color: currentTheme.inactiveColor, offset: Offset(0, -5)),
+        Shadow(color: currentTheme.textColor, offset: Offset(0, -5)),
       ],
     );
-    return Text(text, style: textStyle);
+
+    return TextButton(
+      style: ButtonStyle(
+        splashFactory: NoSplash.splashFactory,
+        overlayColor: WidgetStatePropertyAll(Colors.transparent),
+      ),
+      onPressed: onPressed,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [Text(text, style: textStyle)],
+      ),
+    );
   }
 
   Widget buildDayCircle(
     BuildContext parentContext,
-    String label, {
-    bool isActive = false,
+    String label,
+    Weekday weekday, {
+    bool isToday = false,
   }) {
-    final double size = isActive ? 52 : 46;
+    final double size = isToday ? 52 : 46;
     final double radius = 50;
     return SizedBox(
       width: size,
       height: size,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: isActive
+          color: isToday
               ? currentTheme.primaryColor
               : currentTheme.primaryColorAccent,
           borderRadius: BorderRadius.circular(radius),
@@ -200,9 +234,17 @@ class WeekdayBox extends StatelessWidget {
         child: TextButton(
           style: TextButton.styleFrom(padding: EdgeInsets.all(0)),
           onPressed: () {
-            // TODO add event
-            // parentContext.read<WeekdayBoxBloc>().add()
-            print('pressed $label');
+            if (selectedDays.contains(weekday)) {
+              selectedDays.remove(weekday);
+            } else {
+              selectedDays.add(weekday);
+            }
+
+            setState(() {});
+
+            parentContext.read<RemindersListBloc>().add(
+              GetRemindersDayListEvent(selectedDays),
+            );
           },
           child: SizedBox(
             width: size - 5,
@@ -219,7 +261,7 @@ class WeekdayBox extends StatelessWidget {
                   padding: const EdgeInsets.all(2.0),
                   child: DecoratedBox(
                     decoration: BoxDecoration(
-                      color: isActive ? Colors.orange : Colors.white,
+                      color: isToday ? Colors.orange : Colors.white,
                       borderRadius: BorderRadius.circular(radius),
                     ),
                     child: Center(

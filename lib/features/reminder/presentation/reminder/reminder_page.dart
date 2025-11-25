@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminders_app/core/infrastructure/dependency_injection.dart';
 import 'package:reminders_app/core/shared/request_status.dart';
 import 'package:reminders_app/core/themes/themes.dart';
+import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_event.dart';
@@ -10,19 +11,40 @@ import 'package:reminders_app/features/reminder/presentation/reminder/reminder_s
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_event.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_state.dart';
+import 'package:reminders_app/features/reminder/presentation/selector_cubit.dart';
 import 'package:reminders_app/features/reminder/presentation/widgets/reminder_list_tile.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
 import 'package:reminders_app/features/weekday_box/presentation/weekday_box_page.dart';
 
-class ReminderPage extends StatelessWidget {
-  const ReminderPage({super.key});
+class RemindersPage extends StatefulWidget {
+  RemindersPage({Key? key}) : super(key: key);
+
+  @override
+  _RemindersPageState createState() => _RemindersPageState();
+}
+
+class _RemindersPageState extends State<RemindersPage> {
+  Weekday today = Weekday.monday;
+
+  @override
+  void initState() {
+    super.initState();
+    today = Weekday.values[DateTime.now().weekday - 1];
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          getIt<RemindersListBloc>()..add(GetRemindersListEvent()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              getIt<RemindersListBloc>()
+                ..add(GetRemindersDayListEvent({today})),
+        ),
+        BlocProvider(create: (context) => WeekdayBoxUiCubit()),
+      ],
+
       child: Builder(
         builder: (innerContext) {
           return buildRemindersPage(innerContext);
@@ -121,27 +143,31 @@ class ReminderPage extends StatelessWidget {
     );
   }
 
-  SliverAppBar buildAppBar(BuildContext parentContext) {
+  Widget buildAppBar(BuildContext parentContext) {
     final size = MediaQuery.of(parentContext).size;
-    return SliverAppBar(
-      title: Padding(
-        padding: const EdgeInsets.only(top: 20),
-        child: Text(
-          'RemindMe',
-          style: TextStyle(
-            color: currentTheme.secondaryColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 26,
+    return BlocBuilder<WeekdayBoxUiCubit, bool>(
+      builder: (context, isActive) {
+        return SliverAppBar(
+          title: Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: Text(
+              'RemindMe',
+              style: TextStyle(
+                color: currentTheme.secondaryColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 26,
+              ),
+            ),
           ),
-        ),
-      ),
-      centerTitle: true,
-      toolbarHeight: 40,
-      expandedHeight: size.height * 0.26,
-      collapsedHeight: 50,
-      pinned: true,
-      flexibleSpace: buildFlexibleSpace(parentContext, size),
-      backgroundColor: currentTheme.primaryColor,
+          centerTitle: true,
+          toolbarHeight: 40,
+          expandedHeight: size.height * 0.26,
+          collapsedHeight: 50,
+          pinned: true,
+          flexibleSpace: buildFlexibleSpace(parentContext, size),
+          backgroundColor: currentTheme.primaryColor,
+        );
+      },
     );
   }
 
@@ -179,7 +205,7 @@ class ReminderPage extends StatelessWidget {
                     height: size.height * 0.12,
                   ),
                 ),
-                WeekdayBox(),
+                WeekdayBox(today),
               ],
             ),
           ],
@@ -204,15 +230,6 @@ class ReminderPage extends StatelessWidget {
             ),
           );
         } else if (state.status == RequestStatus.done) {
-          final today = DateTime.now().weekday - 1;
-          final todayReminders = state.reminders
-              ?.where(
-                (element) =>
-                    element.reminderDays.contains(Weekday.values[today]),
-              )
-              .toList();
-          todayReminders?.clear();
-          todayReminders?.addAll(state.reminders ?? {});
           return SliverList(
             delegate: SliverChildBuilderDelegate((context, index) {
               return BlocProvider(
@@ -228,23 +245,23 @@ class ReminderPage extends StatelessWidget {
                     }
                   },
                   child: BlocBuilder<ReminderBloc, ReminderState>(
-                    builder: (innderContext, innderState) {
+                    builder: (innerContext, innderState) {
                       return Padding(
                         padding: EdgeInsets.symmetric(
                           vertical: 5,
                           horizontal: 20,
                         ),
                         child: ReminderListTile(
-                          todayReminders![index],
+                          state.reminders![index],
                           context,
-                          innderContext,
+                          innerContext,
                         ),
                       );
                     },
                   ),
                 ),
               );
-            }, childCount: todayReminders?.length ?? 0),
+            }, childCount: state.reminders?.length ?? 0),
           );
         }
 

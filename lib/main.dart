@@ -14,7 +14,7 @@ void main() {
           brightness: Brightness.light,
         ),
       ),
-      home: ReminderPage(),
+      home: RemindersPage(),
     ),
   );
 }

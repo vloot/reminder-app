@@ -12,6 +12,7 @@ class RemindersListBloc extends Bloc<RemindersListEvent, RemindersListState> {
   RemindersListBloc({required this.reminderRepository})
     : super(RemindersListState.init()) {
     on<GetRemindersListEvent>(onGetRemindersEvent);
+    on<GetRemindersDayListEvent>(onGetRemindersDayEvent);
   }
 
   FutureOr<void> onGetRemindersEvent(
@@ -22,6 +23,20 @@ class RemindersListBloc extends Bloc<RemindersListEvent, RemindersListState> {
     print('onGetRemindersEvent');
     try {
       var res = await reminderRepository.getReminders();
+      res.sort((a, b) => a.time.compareTo(b.time));
+      emit(state.copyWith(status: RequestStatus.done, reminder: res));
+    } catch (e) {
+      emit(state.copyWith(status: RequestStatus.error, error: e.toString()));
+    }
+  }
+
+  FutureOr<void> onGetRemindersDayEvent(
+    GetRemindersDayListEvent event,
+    Emitter<RemindersListState> emit,
+  ) async {
+    emit(state.copyWith(status: RequestStatus.loading));
+    try {
+      var res = await reminderRepository.getDailyReminders(event.weekdaysSet);
       res.sort((a, b) => a.time.compareTo(b.time));
       emit(state.copyWith(status: RequestStatus.done, reminder: res));
     } catch (e) {
