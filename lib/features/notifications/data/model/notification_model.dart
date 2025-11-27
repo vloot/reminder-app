@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart';
-import 'package:timezone/standalone.dart';
 import 'package:timezone/timezone.dart';
 import 'package:flutter/material.dart';
 
