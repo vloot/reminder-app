@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminders_app/core/infrastructure/dependency_injection.dart';
 import 'package:reminders_app/core/shared/request_status.dart';
-import 'package:reminders_app/core/themes/themes.dart';
+import 'package:reminders_app/core/themes/app_themes.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_event.dart';
@@ -94,9 +94,21 @@ class _RemindersPageState extends State<RemindersPage> {
                         listener: (context, state) {
                           if (state is ReminderSuccess) {
                             Navigator.pop(innerContext);
-                            parentContext.read<RemindersListBloc>().add(
-                              GetRemindersListEvent(),
-                            );
+                            if (parentContext.read<ReminderModeCubit>().state ==
+                                ReminderMode.all) {
+                              parentContext.read<RemindersListBloc>().add(
+                                GetRemindersListEvent(),
+                              );
+                            } else {
+                              parentContext
+                                  .read<SelectedDaysCubit>()
+                                  .setMultiple(state.reminder.reminderDays);
+                              parentContext.read<RemindersListBloc>().add(
+                                GetRemindersDayListEvent(
+                                  state.reminder.reminderDays,
+                                ),
+                              );
+                            }
                           }
                           // TODO cover fail state here
                         },

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reminders_app/core/themes/themes.dart';
+import 'package:reminders_app/core/themes/app_themes.dart';
 import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
+import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_event.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_bloc.dart';
@@ -39,7 +40,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
             color: currentTheme.shadowColor,
             spreadRadius: 1,
             blurRadius: 4,
-            offset: Offset(0, 3),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -52,27 +53,78 @@ class _ReminderListTileState extends State<ReminderListTile> {
             hoverColor: Colors.transparent,
           ),
           child: ExpansionTile(
+            minTileHeight: 56,
             initiallyExpanded: false,
             shape: const Border(),
-            leading: IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.check_circle,
-                size: 30,
-                color: currentTheme.primaryColorAccent,
+            // leading: IconButton(
+            //   onPressed: () {},
+            //   icon: Icon(
+            //     Icons.check_circle,
+            //     size: 30,
+            //     color: currentTheme.primaryColorAccent,
+            //   ),
+            // ),
+            title: Container(
+              // HACK padding is used because leading checkbox button isn't implemented yet
+              padding: const EdgeInsets.only(left: 20),
+              child: Transform.translate(
+                offset: Offset(0, -5),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    SizedBox(height: 50),
+                    Positioned(
+                      left: -10,
+                      bottom: 0,
+                      child: Row(
+                        spacing: 6,
+                        children: List.generate(7, (index) {
+                          final size = 6.5;
+                          return Container(
+                            width: size,
+                            height: size,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color:
+                                  widget.reminder.reminderDays.contains(
+                                    Weekday.values[index],
+                                  )
+                                  ? currentTheme.activeColor
+                                  : currentTheme.inactiveColor.withAlpha(100),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                    Positioned.fill(
+                      left: -10,
+                      child: Align(
+                        alignment: AlignmentGeometry.centerLeft,
+                        child: Text(
+                          widget.reminder.title,
+                          style: TextStyle(
+                            color: currentTheme.textColor,
+                            fontWeight: FontWeight.w500,
+                            overflow: TextOverflow.visible,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-            title: Text(
-              widget.reminder.title,
-              style: TextStyle(color: currentTheme.textColor),
-            ),
             trailing: Text(
+              // IDEA add clock emoji before or after time
               '${widget.reminder.time.hour}:${(widget.reminder.time.minute).toString().padLeft(2, '0')}',
               style: TextStyle(color: currentTheme.textColor, fontSize: 14),
             ),
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 5,
+                ),
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border(
@@ -82,7 +134,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(50, 0, 20, 0),
+                padding: const EdgeInsets.fromLTRB(25, 0, 20, 0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -133,7 +185,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
                             );
                           },
                           icon: Icon(Icons.edit_note_rounded),
-                          color: Colors.green,
+                          color: currentTheme.activeColor,
                         ),
                         IconButton(
                           onPressed: () async {
@@ -141,30 +193,20 @@ class _ReminderListTileState extends State<ReminderListTile> {
                               showDragHandle: true,
                               context: widget.parentContext,
                               builder: (context) {
-                                return Confirmation(
-                                  () async {
-                                    // BlocListener()
-                                    print('confirm');
-                                    widget.innerContext
-                                        .read<ReminderBloc>()
-                                        .add(
-                                          DeleteReminderEvent(
-                                            reminder: widget.reminder,
-                                          ),
-                                        );
-                                    print('after event');
-                                    widget.parentContext
-                                        .read<RemindersListBloc>()
-                                        .add(GetRemindersListEvent());
-                                  },
-                                  () async {
-                                    print('cancel');
-                                  },
-                                );
+                                return Confirmation(() async {
+                                  widget.innerContext.read<ReminderBloc>().add(
+                                    DeleteReminderEvent(
+                                      reminder: widget.reminder,
+                                    ),
+                                  );
+                                  widget.parentContext
+                                      .read<RemindersListBloc>()
+                                      .add(GetRemindersListEvent());
+                                }, () async {});
                               },
                             );
                           },
-                          color: Colors.redAccent,
+                          color: currentTheme.warningColor,
                           icon: Icon(Icons.delete_outline_sharp),
                         ),
                       ],

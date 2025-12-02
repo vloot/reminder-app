@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reminders_app/core/themes/themes.dart';
+import 'package:reminders_app/core/themes/app_themes.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_event.dart';
@@ -85,7 +85,6 @@ class _WeekdayBoxState extends State<WeekdayBox> {
     BuildContext parentContext,
     BoxConstraints constraints,
   ) {
-    print('rebuild called');
     final mode = context.watch<ReminderModeCubit>().state;
 
     // final mode = ReminderMode.selected;
@@ -144,7 +143,6 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         selectorButton('All', () {
-                          print('All btn');
                           if (mode == ReminderMode.all) return;
 
                           context.read<SelectedDaysCubit>().clearSelection();
@@ -156,8 +154,6 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                           );
                         }, mode == ReminderMode.all),
                         selectorButton('Selected only', () {
-                          print('Selected btn');
-
                           if (mode == ReminderMode.selected) return;
 
                           context.read<ReminderModeCubit>().viewSelected();
@@ -186,20 +182,6 @@ class _WeekdayBoxState extends State<WeekdayBox> {
     void Function() onPressed,
     bool isActive,
   ) {
-    final textStyle = TextStyle(
-      decoration: TextDecoration.combine([TextDecoration.underline]),
-      decorationThickness: 3,
-      decorationColor: isActive
-          ? currentTheme.primaryColorAccent
-          : currentTheme.transparent,
-      color: Colors.transparent,
-      fontSize: 15,
-      fontWeight: FontWeight.w700,
-      shadows: <Shadow>[
-        Shadow(color: currentTheme.textColor, offset: Offset(0, -5)),
-      ],
-    );
-
     return TextButton(
       style: ButtonStyle(
         splashFactory: NoSplash.splashFactory,
@@ -209,7 +191,25 @@ class _WeekdayBoxState extends State<WeekdayBox> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         crossAxisAlignment: CrossAxisAlignment.end,
-        children: [Text(text, style: textStyle)],
+        children: [
+          AnimatedDefaultTextStyle(
+            style: TextStyle(
+              decoration: TextDecoration.combine([TextDecoration.underline]),
+              decorationThickness: 3,
+              decorationColor: isActive
+                  ? currentTheme.primaryColorAccent
+                  : currentTheme.transparent,
+              color: Colors.transparent,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              shadows: <Shadow>[
+                Shadow(color: currentTheme.textColor, offset: Offset(0, -5)),
+              ],
+            ),
+            duration: Duration(milliseconds: 100),
+            child: Text(text),
+          ),
+        ],
       ),
     );
   }
@@ -230,8 +230,6 @@ class _WeekdayBoxState extends State<WeekdayBox> {
     return BlocSelector<SelectedDaysCubit, SelectedDaysState, bool>(
       selector: (state) => state.selected.contains(weekday),
       builder: (context, containsThisDay) {
-        print('rebuilding $weekday');
-
         Color borderColor = containsThisDay
             ? currentTheme.primaryColor
             : currentTheme.inactiveColor;
@@ -242,7 +240,9 @@ class _WeekdayBoxState extends State<WeekdayBox> {
         return SizedBox(
           width: size,
           height: size,
-          child: DecoratedBox(
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
             decoration: BoxDecoration(
               color: borderColor,
               borderRadius: BorderRadius.circular(radius),
@@ -255,12 +255,10 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                     .state
                     .selected;
                 final isSelected = selectedDays.contains(weekday);
-                print(isSelected);
 
                 if (selectedDays.length == 1 &&
                     selectedDays.firstOrNull == weekday) {
                   // do not toggle last day
-                  print('do not toggle last day');
                   return;
                 }
 

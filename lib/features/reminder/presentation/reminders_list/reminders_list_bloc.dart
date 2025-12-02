@@ -20,7 +20,6 @@ class RemindersListBloc extends Bloc<RemindersListEvent, RemindersListState> {
     Emitter<RemindersListState> emit,
   ) async {
     emit(state.copyWith(status: RequestStatus.loading));
-    print('onGetRemindersEvent');
     try {
       var res = await reminderRepository.getReminders();
       res.sort((a, b) => a.time.compareTo(b.time));

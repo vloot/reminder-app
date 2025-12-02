@@ -11,6 +11,10 @@ class SelectedDaysCubit extends Cubit<SelectedDaysState> {
     emit(SelectedDaysState(next));
   }
 
+  void setMultiple(Set<Weekday> days) {
+    emit(SelectedDaysState(days));
+  }
+
   void setSingle(Weekday day) {
     emit(SelectedDaysState({day}));
   }

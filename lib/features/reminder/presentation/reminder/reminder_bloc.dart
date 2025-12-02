@@ -33,12 +33,11 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
       );
 
       final int id = await reminderRepository.addReminder(reminder.toEntity());
+      final newReminder = reminder.copyWith(id: id);
 
-      await notificationRepository.scheduleNotification(
-        reminder.copyWith(id: id),
-      );
+      await notificationRepository.scheduleNotification(newReminder);
 
-      emit(ReminderSuccess());
+      emit(ReminderSuccess(newReminder));
     } catch (err) {
       emit(ReminderFailure(err.toString()));
     }

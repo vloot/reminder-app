@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reminders_app/core/themes/themes.dart';
+import 'package:reminders_app/core/themes/app_themes.dart';
 
 class Confirmation extends StatelessWidget {
   final Future<void> Function() onConfirmCallback;

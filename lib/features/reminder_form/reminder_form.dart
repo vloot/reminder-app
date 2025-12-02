@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:reminders_app/core/themes/themes.dart';
+import 'package:reminders_app/core/themes/app_themes.dart';
 import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
@@ -99,6 +99,7 @@ class _ReminderFormState extends State<ReminderForm> {
                     hintText: 'Title',
                     maxLines: 1,
                     maxLength: 38,
+                    autofocus: widget.formType == ReminderFormType.add,
                   ),
                   createInput(
                     _descriptionController,
@@ -150,11 +151,13 @@ class _ReminderFormState extends State<ReminderForm> {
     String? contentText,
     int maxLength = 128,
     int maxLines = 2,
+    bool autofocus = false,
   }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 7),
       child: TextField(
         controller: controller,
+        autofocus: autofocus,
         maxLines: maxLines,
         maxLength: maxLength,
         maxLengthEnforcement: MaxLengthEnforcement.enforced,
