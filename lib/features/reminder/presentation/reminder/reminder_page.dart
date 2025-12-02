@@ -80,11 +80,14 @@ class _RemindersPageState extends State<RemindersPage> {
           ),
           onPressed: () async {
             showModalBottomSheet(
+              // FIXME why is this here?
+              isScrollControlled: true,
               showDragHandle: true,
               context: parentContext,
               builder: (builderContext) {
                 return BlocProvider(
-                  create: (builderContext) => getIt<ReminderBloc>(),
+                  create: (builderContext) =>
+                      getIt<ReminderBloc>(), // FIXME why create a new bloc??
                   child: Builder(
                     builder: (innerContext) {
                       return BlocListener<ReminderBloc, ReminderState>(

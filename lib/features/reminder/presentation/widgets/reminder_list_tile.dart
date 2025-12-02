@@ -31,12 +31,12 @@ class _ReminderListTileState extends State<ReminderListTile> {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: currentTheme.secondaryColor,
+        color: currentTheme.secondaryColorAccent,
         border: Border.all(color: Colors.transparent),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12,
+            color: currentTheme.shadowColor,
             spreadRadius: 1,
             blurRadius: 4,
             offset: Offset(0, 3),
@@ -62,7 +62,10 @@ class _ReminderListTileState extends State<ReminderListTile> {
                 color: currentTheme.primaryColorAccent,
               ),
             ),
-            title: Text(widget.reminder.title),
+            title: Text(
+              widget.reminder.title,
+              style: TextStyle(color: currentTheme.textColor),
+            ),
             trailing: Text(
               '${widget.reminder.time.hour}:${(widget.reminder.time.minute).toString().padLeft(2, '0')}',
               style: TextStyle(color: currentTheme.textColor, fontSize: 14),
@@ -101,6 +104,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
                         IconButton(
                           onPressed: () {
                             showModalBottomSheet(
+                              isScrollControlled: true,
                               context: widget.parentContext,
                               showDragHandle: true,
                               builder: (context) {
@@ -134,6 +138,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
                         IconButton(
                           onPressed: () async {
                             showModalBottomSheet(
+                              showDragHandle: true,
                               context: widget.parentContext,
                               builder: (context) {
                                 return Confirmation(

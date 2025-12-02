@@ -49,7 +49,7 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                                 decoration: BoxDecoration(
                                   boxShadow: [
                                     BoxShadow(
-                                      color: currentTheme.inactiveColor,
+                                      color: currentTheme.shadowColor,
                                       spreadRadius: 1,
                                       blurRadius: 10,
                                       offset: Offset(0, 2),
@@ -60,7 +60,10 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.all(12.0),
-                                  child: buildDayCircles(parentContext),
+                                  child: buildDayCircles(
+                                    parentContext,
+                                    constraints,
+                                  ),
                                 ),
                               ),
                             ),
@@ -78,20 +81,23 @@ class _WeekdayBoxState extends State<WeekdayBox> {
     );
   }
 
-  Widget buildDayCircles(BuildContext parentContext) {
+  Widget buildDayCircles(
+    BuildContext parentContext,
+    BoxConstraints constraints,
+  ) {
     print('rebuild called');
     final mode = context.watch<ReminderModeCubit>().state;
 
     // final mode = ReminderMode.selected;
 
     final days = [
-      buildDayCircle(parentContext, 'M', Weekday.monday, mode),
-      buildDayCircle(parentContext, 'T', Weekday.tuesday, mode),
-      buildDayCircle(parentContext, 'W', Weekday.wednesday, mode),
-      buildDayCircle(parentContext, 'T', Weekday.thursday, mode),
-      buildDayCircle(parentContext, 'F', Weekday.friday, mode),
-      buildDayCircle(parentContext, 'S', Weekday.saturday, mode),
-      buildDayCircle(parentContext, 'S', Weekday.sunday, mode),
+      buildDayCircle(parentContext, 'M', Weekday.monday, mode, constraints),
+      buildDayCircle(parentContext, 'T', Weekday.tuesday, mode, constraints),
+      buildDayCircle(parentContext, 'W', Weekday.wednesday, mode, constraints),
+      buildDayCircle(parentContext, 'T', Weekday.thursday, mode, constraints),
+      buildDayCircle(parentContext, 'F', Weekday.friday, mode, constraints),
+      buildDayCircle(parentContext, 'S', Weekday.saturday, mode, constraints),
+      buildDayCircle(parentContext, 'S', Weekday.sunday, mode, constraints),
     ];
 
     return Row(
@@ -121,7 +127,7 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: currentTheme.inactiveColor,
+                          color: currentTheme.shadowColor,
                           spreadRadius: 0.1,
                           blurRadius: 10,
                           offset: Offset(0, 0),
@@ -213,9 +219,12 @@ class _WeekdayBoxState extends State<WeekdayBox> {
     String label,
     Weekday weekday,
     ReminderMode mode,
+    BoxConstraints constraints,
   ) {
     final bool isToday = widget.today == weekday;
-    final double size = isToday ? 52 : 46;
+    final double size = isToday
+        ? constraints.maxWidth * 0.13
+        : constraints.maxWidth * 0.11;
     final double radius = 50;
 
     return BlocSelector<SelectedDaysCubit, SelectedDaysState, bool>(

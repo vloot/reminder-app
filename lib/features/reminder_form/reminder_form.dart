@@ -61,59 +61,85 @@ class _ReminderFormState extends State<ReminderForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 5),
-      height: MediaQuery.of(context).copyWith().size.height * 0.52,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Center(
+    final mq = MediaQuery.of(context);
+    final keyboard = mq.viewInsets.bottom;
+    return AnimatedPadding(
+      padding: EdgeInsets.only(bottom: mq.viewInsets.bottom),
+      duration: const Duration(milliseconds: 150),
+      curve: Curves.easeOut,
+      child: SafeArea(
+        top: false,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: (mq.size.height - keyboard) * 0.65,
+          ),
+          child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                '${widget.title} Reminder',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 5),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 15),
+                      child: Text(
+                        '${widget.title} Reminder',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24,
+                        ),
+                      ),
+                    ),
+                  ),
+                  createInput(
+                    _titleController,
+                    contentText: _titleController.text,
+                    hintText: 'Title',
+                    maxLines: 1,
+                    maxLength: 38,
+                  ),
+                  createInput(
+                    _descriptionController,
+                    contentText: _descriptionController.text,
+                    hintText: 'Description',
+                  ),
+                  buildTimeInput(context),
+
+                  buildWeekdays(),
+                  SizedBox(height: 12),
+                  FilledButton(
+                    onPressed: () {
+                      widget.submitCallback(
+                        ReminderModel(
+                          id: widget.reminderModel?.id,
+                          title: _titleController.text,
+                          description: _descriptionController.text,
+                          time: DateTime(2000, 1, 1, _time.hour, _time.minute),
+                          reminderDays: selectedDays,
+                        ),
+                      );
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(
+                        currentTheme.primaryColor,
+                      ),
+                    ),
+                    child: Text(
+                      'Save reminder',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 25),
+                ],
               ),
             ),
           ),
-          createInput(
-            _titleController,
-            contentText: _titleController.text,
-            hintText: 'Title',
-            maxLines: 1,
-            maxLength: 38,
-          ),
-          createInput(
-            _descriptionController,
-            contentText: _descriptionController.text,
-            hintText: 'Description',
-          ),
-          buildTimeInput(context),
-          buildWeekdays(),
-          SizedBox(height: 12),
-          FilledButton(
-            onPressed: () {
-              widget.submitCallback(
-                ReminderModel(
-                  id: widget.reminderModel?.id,
-                  title: _titleController.text,
-                  description: _descriptionController.text,
-                  time: DateTime(2000, 1, 1, _time.hour, _time.minute),
-                  reminderDays: selectedDays,
-                ),
-              );
-            },
-            style: ButtonStyle(
-              backgroundColor: WidgetStateProperty.all(
-                currentTheme.primaryColor,
-              ),
-            ),
-            child: Text(
-              'Save reminder',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
