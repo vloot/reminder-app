@@ -244,7 +244,10 @@ class _WeekdayBoxState extends State<WeekdayBox> {
             duration: Duration(milliseconds: 400),
             curve: Curves.easeInOut,
             decoration: BoxDecoration(
-              color: borderColor,
+              border: BoxBorder.all(
+                width: containsThisDay ? 3.5 : 1.5,
+                color: borderColor,
+              ),
               borderRadius: BorderRadius.circular(radius),
             ),
             child: TextButton(
@@ -279,7 +282,7 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                 height: size - 5,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: currentTheme.secondaryColor,
                     borderRadius: BorderRadius.circular(radius),
                   ),
                   child: SizedBox(
@@ -298,7 +301,9 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                             style: TextStyle(
                               fontSize: 21,
                               fontWeight: FontWeight.w700,
-                              color: currentTheme.textColor,
+                              color: isToday
+                                  ? currentTheme.secondaryColor
+                                  : currentTheme.textColor,
                             ),
                           ),
                         ),

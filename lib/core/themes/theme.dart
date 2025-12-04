@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
+  final Brightness brightness;
   final Color primaryColor;
   final Color primaryColorAccent;
   final Color secondaryColor;
@@ -9,11 +10,13 @@ class AppTheme {
   final Color inactiveColor;
   final Color warningColor;
   final Color backgroundColor;
+  final Color backgroundOverlayColor;
   final Color textColor;
   final Color transparent;
   final Color shadowColor;
 
   AppTheme({
+    required this.brightness,
     required this.primaryColor,
     required this.primaryColorAccent,
     required this.secondaryColor,
@@ -22,6 +25,7 @@ class AppTheme {
     required this.inactiveColor,
     required this.warningColor,
     required this.backgroundColor,
+    required this.backgroundOverlayColor,
     required this.textColor,
     required this.transparent,
     required this.shadowColor,

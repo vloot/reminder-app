@@ -9,7 +9,7 @@ class ReminderForm extends StatefulWidget {
   final ReminderFormType formType;
   final String title;
   final BuildContext parentContext;
-  final void Function(ReminderModel newReminder) submitCallback;
+  final void Function(ReminderModel) submitCallback;
 
   final ReminderModel? reminderModel;
 
@@ -122,14 +122,13 @@ class _ReminderFormState extends State<ReminderForm> {
                         ),
                       );
                     },
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(
-                        currentTheme.primaryColor,
-                      ),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: currentTheme.primaryColor,
                     ),
                     child: Text(
                       'Save reminder',
                       style: TextStyle(
+                        color: currentTheme.secondaryColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
@@ -161,14 +160,20 @@ class _ReminderFormState extends State<ReminderForm> {
         maxLines: maxLines,
         maxLength: maxLength,
         maxLengthEnforcement: MaxLengthEnforcement.enforced,
-        cursorColor: Colors.amber,
+        cursorColor: currentTheme.primaryColor,
+        style: TextStyle(
+          color: currentTheme.textColor,
+          fontWeight: FontWeight.w600,
+        ),
         decoration: InputDecoration(
           labelText: hintText,
+          labelStyle: TextStyle(color: currentTheme.textColor, fontSize: 18),
           hintFadeDuration: Duration(seconds: 1),
           contentPadding: EdgeInsets.fromLTRB(12, 16, 12, 16),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
-          hoverColor: Colors.orangeAccent,
-          focusColor: Colors.blueAccent,
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: currentTheme.primaryColor),
+          ),
           counterText: "",
         ),
       ),
@@ -182,9 +187,9 @@ class _ReminderFormState extends State<ReminderForm> {
       fontWeight: FontWeight.w600,
     );
     return TextButton(
-      style: ButtonStyle(
+      style: TextButton.styleFrom(
         splashFactory: NoSplash.splashFactory,
-        overlayColor: WidgetStatePropertyAll(Colors.transparent),
+        overlayColor: currentTheme.transparent,
       ),
       onPressed: () async {
         final time = await showTimePicker(
@@ -248,22 +253,47 @@ class _ReminderFormState extends State<ReminderForm> {
   }
 
   Widget buildWeekdayButton(Weekday weekday, String text) {
+    var selected = selectedDays.contains(weekday);
     return Padding(
       padding: const EdgeInsets.all(3.0),
       child: ChoiceChip(
+        side: BorderSide(
+          color: selected
+              ? currentTheme.transparent
+              : currentTheme.inactiveColor,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(100),
         ),
-        label: SizedBox(width: 35, child: Center(child: Text(text))),
-        selected: selectedDays.contains(weekday),
+        label: SizedBox(
+          width: 35,
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(
+                shadows: [
+                  Shadow(
+                    color: currentTheme.shadowColor,
+                    offset: Offset(0, 0.5),
+                  ),
+                ],
+                color: selected
+                    ? currentTheme.secondaryColor
+                    : currentTheme.textColor,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ),
+        selected: selected,
         showCheckmark: false,
-        selectedColor: Colors.greenAccent,
-        disabledColor: Colors.blueGrey,
+        selectedColor: currentTheme.activeColor,
+        disabledColor: currentTheme.inactiveColor,
         onSelected: (value) {
           setState(() {
             if (value) {
               selectedDays.add(weekday);
-            } else {
+            } else if (selectedDays.length != 1 && !value) {
               selectedDays.remove(weekday);
             }
           });

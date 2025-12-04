@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:reminders_app/core/themes/app_themes.dart';
 
@@ -5,9 +7,9 @@ class Confirmation extends StatelessWidget {
   final Future<void> Function() onConfirmCallback;
   final Future<void> Function() onCancelCallback;
 
-  const Confirmation(
-    this.onConfirmCallback,
-    this.onCancelCallback, {
+  const Confirmation({
+    required this.onConfirmCallback,
+    required this.onCancelCallback,
     super.key,
   });
 
@@ -28,59 +30,55 @@ class Confirmation extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 120,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    await onConfirmCallback();
-                    Navigator.pop(context, true);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                      currentTheme.warningColor,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      'Delete',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: currentTheme.secondaryColor,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ),
+              buildButton(
+                context,
+                'Delete',
+                currentTheme.secondaryColor,
+                currentTheme.warningColor,
+                onConfirmCallback,
               ),
-              SizedBox(
-                width: 120,
-                child: ElevatedButton(
-                  onPressed: () {
-                    onCancelCallback();
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                      currentTheme.inactiveColor,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: currentTheme.secondaryColor,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ),
+              buildButton(
+                context,
+                'Cancel',
+                currentTheme.secondaryColor,
+                currentTheme.inactiveColor,
+                onCancelCallback,
               ),
             ],
           ),
           SizedBox(),
         ],
+      ),
+    );
+  }
+
+  SizedBox buildButton(
+    BuildContext context,
+    String text,
+    Color textColor,
+    Color backgroundColor,
+    Future<void> Function() callback,
+  ) {
+    return SizedBox(
+      child: ElevatedButton(
+        onPressed: () async {
+          await callback();
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: backgroundColor,
+          minimumSize: Size(135, 45),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: textColor,
+              fontSize: 15,
+            ),
+          ),
+        ),
       ),
     );
   }

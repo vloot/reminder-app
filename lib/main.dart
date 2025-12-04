@@ -12,7 +12,7 @@ void main() {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: currentTheme.primaryColor,
-          brightness: Brightness.light,
+          brightness: currentTheme.brightness,
         ),
       ),
       home: RemindersPage(),

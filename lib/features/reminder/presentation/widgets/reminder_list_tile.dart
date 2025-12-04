@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminders_app/core/themes/app_themes.dart';
 import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
+import 'package:reminders_app/features/reminder/presentation/form_launcher.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_event.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_bloc.dart';
@@ -14,14 +15,8 @@ import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
 class ReminderListTile extends StatefulWidget {
   final ReminderModel reminder;
   final BuildContext parentContext;
-  final BuildContext innerContext;
 
-  ReminderListTile(
-    this.reminder,
-    this.parentContext,
-    this.innerContext, {
-    super.key,
-  });
+  const ReminderListTile(this.reminder, this.parentContext, {super.key});
 
   @override
   _ReminderListTileState createState() => _ReminderListTileState();
@@ -32,7 +27,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: currentTheme.secondaryColorAccent,
+        color: currentTheme.secondaryColor,
         border: Border.all(color: Colors.transparent),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -128,7 +123,10 @@ class _ReminderListTileState extends State<ReminderListTile> {
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border(
-                      bottom: BorderSide(color: Colors.black12, width: 1),
+                      bottom: BorderSide(
+                        color: currentTheme.textColor.withAlpha(120),
+                        width: 1,
+                      ),
                     ),
                   ),
                 ),
@@ -155,33 +153,22 @@ class _ReminderListTileState extends State<ReminderListTile> {
                       children: [
                         IconButton(
                           onPressed: () {
-                            showModalBottomSheet(
-                              isScrollControlled: true,
-                              context: widget.parentContext,
-                              showDragHandle: true,
-                              builder: (context) {
-                                return ReminderForm(
-                                  ReminderFormType.edit,
-                                  'Editing',
-                                  widget.parentContext,
-                                  (newReminder) {
-                                    widget.innerContext
-                                        .read<ReminderBloc>()
-                                        .add(
-                                          EditReminderEvent(
-                                            id: newReminder.id!,
-                                            title: newReminder.title,
-                                            description:
-                                                newReminder.description ?? '',
-                                            time: newReminder.time,
-                                            reminderDays:
-                                                newReminder.reminderDays,
-                                          ),
-                                        );
-                                  },
-                                  reminderModel: widget.reminder,
+                            showReminderForm(
+                              context,
+                              ReminderFormType.edit,
+                              'Editing',
+                              submitCallback: (newReminder) {
+                                widget.parentContext.read<ReminderBloc>().add(
+                                  EditReminderEvent(
+                                    id: newReminder.id!,
+                                    title: newReminder.title,
+                                    description: newReminder.description ?? '',
+                                    time: newReminder.time,
+                                    reminderDays: newReminder.reminderDays,
+                                  ),
                                 );
                               },
+                              reminderModel: widget.reminder,
                             );
                           },
                           icon: Icon(Icons.edit_note_rounded),
@@ -189,22 +176,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
                         ),
                         IconButton(
                           onPressed: () async {
-                            showModalBottomSheet(
-                              showDragHandle: true,
-                              context: widget.parentContext,
-                              builder: (context) {
-                                return Confirmation(() async {
-                                  widget.innerContext.read<ReminderBloc>().add(
-                                    DeleteReminderEvent(
-                                      reminder: widget.reminder,
-                                    ),
-                                  );
-                                  widget.parentContext
-                                      .read<RemindersListBloc>()
-                                      .add(GetRemindersListEvent());
-                                }, () async {});
-                              },
-                            );
+                            await showConfirmationModal();
                           },
                           color: currentTheme.warningColor,
                           icon: Icon(Icons.delete_outline_sharp),
@@ -218,6 +190,30 @@ class _ReminderListTileState extends State<ReminderListTile> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> showConfirmationModal() async {
+    showModalBottomSheet(
+      showDragHandle: true,
+      context: widget.parentContext,
+      backgroundColor: currentTheme.backgroundOverlayColor,
+      builder: (context) {
+        return Confirmation(
+          onConfirmCallback: () async {
+            widget.parentContext.read<ReminderBloc>().add(
+              DeleteReminderEvent(reminder: widget.reminder),
+            );
+            widget.parentContext.read<RemindersListBloc>().add(
+              GetRemindersListEvent(),
+            );
+            Navigator.pop(context, true);
+          },
+          onCancelCallback: () async {
+            Navigator.pop(context, true);
+          },
+        );
+      },
     );
   }
 }

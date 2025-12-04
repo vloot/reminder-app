@@ -4,6 +4,7 @@ import 'package:reminders_app/core/infrastructure/dependency_injection.dart';
 import 'package:reminders_app/core/shared/request_status.dart';
 import 'package:reminders_app/core/themes/app_themes.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
+import 'package:reminders_app/features/reminder/presentation/form_launcher.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_event.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_state.dart';
@@ -11,11 +12,10 @@ import 'package:reminders_app/features/reminder/presentation/reminders_list/remi
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_event.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_state.dart';
 import 'package:reminders_app/features/reminder/presentation/widgets/reminder_list_tile.dart';
-import 'package:reminders_app/features/reminder_form/reminder_form.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
 import 'package:reminders_app/features/weekday_box/presentation/cubit/reminder_mode_cubit.dart';
 import 'package:reminders_app/features/weekday_box/presentation/cubit/selected_days_cubit.dart';
-import 'package:reminders_app/features/weekday_box/presentation/widgets/weekday_box_page.dart';
+import 'package:reminders_app/features/weekday_box/presentation/widgets/weekday_box.dart';
 
 class RemindersPage extends StatefulWidget {
   const RemindersPage({super.key});
@@ -38,30 +38,31 @@ class _RemindersPageState extends State<RemindersPage> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) =>
+          create: (_) =>
               getIt<RemindersListBloc>()
                 ..add(GetRemindersDayListEvent({today})),
         ),
+        BlocProvider(create: (_) => getIt<ReminderBloc>()),
         BlocProvider(create: (_) => SelectedDaysCubit(today)),
         BlocProvider(create: (_) => ReminderModeCubit()),
       ],
 
       child: Builder(
-        builder: (innerContext) {
-          return buildRemindersPage(innerContext);
+        builder: (context) {
+          return buildRemindersPage(context);
         },
       ),
     );
   }
 
-  Scaffold buildRemindersPage(BuildContext parentContext) {
+  Scaffold buildRemindersPage(BuildContext context) {
     return Scaffold(
       backgroundColor: currentTheme.backgroundColor,
       body: CustomScrollView(
         slivers: [
-          buildAppBar(parentContext),
-          buildListMenu(parentContext),
-          buildBloc(parentContext),
+          buildAppBar(context),
+          buildListHeader(context),
+          buildBloc(context),
           // add some space at the bottom
           SliverToBoxAdapter(child: SizedBox(height: 50)),
         ],
@@ -69,7 +70,7 @@ class _RemindersPageState extends State<RemindersPage> {
     );
   }
 
-  SliverToBoxAdapter buildListMenu(BuildContext parentContext) {
+  SliverToBoxAdapter buildListHeader(BuildContext context) {
     return SliverToBoxAdapter(
       child: SizedBox(
         height: 40,
@@ -79,56 +80,17 @@ class _RemindersPageState extends State<RemindersPage> {
             overlayColor: WidgetStatePropertyAll(Colors.transparent),
           ),
           onPressed: () async {
-            showModalBottomSheet(
-              // FIXME why is this here?
-              isScrollControlled: true,
-              showDragHandle: true,
-              context: parentContext,
-              builder: (builderContext) {
-                return BlocProvider(
-                  create: (builderContext) =>
-                      getIt<ReminderBloc>(), // FIXME why create a new bloc??
-                  child: Builder(
-                    builder: (innerContext) {
-                      return BlocListener<ReminderBloc, ReminderState>(
-                        listener: (context, state) {
-                          if (state is ReminderSuccess) {
-                            Navigator.pop(innerContext);
-                            if (parentContext.read<ReminderModeCubit>().state ==
-                                ReminderMode.all) {
-                              parentContext.read<RemindersListBloc>().add(
-                                GetRemindersListEvent(),
-                              );
-                            } else {
-                              parentContext
-                                  .read<SelectedDaysCubit>()
-                                  .setMultiple(state.reminder.reminderDays);
-                              parentContext.read<RemindersListBloc>().add(
-                                GetRemindersDayListEvent(
-                                  state.reminder.reminderDays,
-                                ),
-                              );
-                            }
-                          }
-                          // TODO cover fail state here
-                        },
-                        child: ReminderForm(
-                          ReminderFormType.add,
-                          'Add',
-                          innerContext,
-                          (newReminder) async {
-                            innerContext.read<ReminderBloc>().add(
-                              AddReminderEvent(
-                                title: newReminder.title,
-                                description: newReminder.description ?? '',
-                                time: newReminder.time,
-                                reminderDays: newReminder.reminderDays,
-                              ),
-                            );
-                          },
-                        ),
-                      );
-                    },
+            showReminderForm(
+              context,
+              ReminderFormType.add,
+              'Add',
+              submitCallback: (reminderModel) async {
+                context.read<ReminderBloc>().add(
+                  AddReminderEvent(
+                    title: reminderModel.title,
+                    description: reminderModel.description ?? '',
+                    time: reminderModel.time,
+                    reminderDays: reminderModel.reminderDays,
                   ),
                 );
               },
@@ -229,65 +191,52 @@ class _RemindersPageState extends State<RemindersPage> {
     );
   }
 
-  BlocBuilder<RemindersListBloc, RemindersListState> buildBloc(
-    BuildContext parentContext,
-  ) {
-    return BlocBuilder<RemindersListBloc, RemindersListState>(
-      builder: (context, state) {
-        if (state.status == RequestStatus.loading) {
-          return SliverToBoxAdapter(
-            child: Center(child: CircularProgressIndicator()),
-          );
-        } else if (state.status == RequestStatus.error) {
-          return Center(
-            child: SliverToBoxAdapter(
-              child: Text(state.errorMessage ?? 'Unknown error'),
-            ),
-          );
-        } else if (state.status == RequestStatus.done) {
-          return SliverList(
-            delegate: SliverChildBuilderDelegate((context, index) {
-              return BlocProvider(
-                create: (context) => getIt<ReminderBloc>(),
-                child: BlocListener<ReminderBloc, ReminderState>(
-                  listener: (context, state) {
-                    bool update = false;
-                    if (state is ReminderSuccess || state is ReminderEdited) {
-                      Navigator.pop(context);
-                      update = true;
-                    } else if (state is ReminderDeleted) {
-                      update = true;
-                    }
-
-                    if (update) {
-                      parentContext.read<RemindersListBloc>().add(
-                        GetRemindersListEvent(),
-                      );
-                    }
-                  },
-                  child: BlocBuilder<ReminderBloc, ReminderState>(
-                    builder: (innerContext, innderState) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 5,
-                          horizontal: 20,
-                        ),
-                        child: ReminderListTile(
-                          state.reminders![index],
-                          context,
-                          innerContext,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              );
-            }, childCount: state.reminders?.length ?? 0),
-          );
+  Widget buildBloc(BuildContext parentContext) {
+    return BlocListener(
+      bloc: parentContext.read<ReminderBloc>(),
+      listener: (_, state) {
+        bool reloadList = false;
+        if (state is ReminderSuccess || state is ReminderEdited) {
+          reloadList = true;
+        } else if (state is ReminderDeleted) {
+          reloadList = true;
+        } else if (state is ReminderLoading) {
+          Navigator.of(parentContext, rootNavigator: true).pop();
         }
 
-        return SliverToBoxAdapter(child: Text("Unknown error"));
+        if (reloadList) {
+          parentContext.read<RemindersListBloc>().add(GetRemindersListEvent());
+        }
       },
+      child: BlocBuilder<RemindersListBloc, RemindersListState>(
+        builder: (_, state) {
+          if (state.status == RequestStatus.loading) {
+            return SliverToBoxAdapter(
+              child: Center(child: CircularProgressIndicator()),
+            );
+          } else if (state.status == RequestStatus.error) {
+            return Center(
+              child: SliverToBoxAdapter(
+                child: Text(state.errorMessage ?? 'Unknown error'),
+              ),
+            );
+          } else if (state.status == RequestStatus.done) {
+            return SliverList(
+              delegate: SliverChildBuilderDelegate((sliverContext, index) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                  child: ReminderListTile(
+                    state.reminders![index],
+                    sliverContext,
+                  ),
+                );
+              }, childCount: state.reminders?.length ?? 0),
+            );
+          }
+
+          return SliverToBoxAdapter(child: Text("Unknown error"));
+        },
+      ),
     );
   }
 }
