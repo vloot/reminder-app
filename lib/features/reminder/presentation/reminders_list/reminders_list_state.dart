@@ -13,12 +13,12 @@ class RemindersListState {
 
   RemindersListState copyWith({
     RequestStatus? status,
-    List<ReminderModel>? reminder,
-    String? error,
+    List<ReminderModel>? reminders,
+    String? errorMessage,
   }) {
     return RemindersListState(
       status: status ?? this.status,
-      reminders: reminder ?? this.reminders,
+      reminders: reminders ?? this.reminders,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

@@ -33,5 +33,5 @@ final orangeDarkTheme = AppTheme(
   shadowColor: Colors.black54,
 );
 
-AppTheme currentTheme = orangeLightTheme;
-// AppTheme currentTheme = orangeDarkTheme;
+// AppTheme currentTheme = orangeLightTheme;
+AppTheme currentTheme = orangeDarkTheme;

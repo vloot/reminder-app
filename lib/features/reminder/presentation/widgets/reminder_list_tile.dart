@@ -9,7 +9,6 @@ import 'package:reminders_app/features/reminder/presentation/reminder/reminder_e
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_event.dart';
 import 'package:reminders_app/features/reminder/presentation/widgets/confirmation.dart';
-import 'package:reminders_app/features/reminder_form/reminder_form.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
 
 class ReminderListTile extends StatefulWidget {

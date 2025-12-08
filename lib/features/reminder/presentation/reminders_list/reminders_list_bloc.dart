@@ -22,10 +22,13 @@ class RemindersListBloc extends Bloc<RemindersListEvent, RemindersListState> {
     emit(state.copyWith(status: RequestStatus.loading));
     try {
       var res = await reminderRepository.getReminders();
+      await Future.delayed(const Duration(milliseconds: 400)); // debounce time
       res.sort((a, b) => a.time.compareTo(b.time));
-      emit(state.copyWith(status: RequestStatus.done, reminder: res));
+      emit(state.copyWith(status: RequestStatus.done, reminders: res));
     } catch (e) {
-      emit(state.copyWith(status: RequestStatus.error, error: e.toString()));
+      emit(
+        state.copyWith(status: RequestStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -37,9 +40,11 @@ class RemindersListBloc extends Bloc<RemindersListEvent, RemindersListState> {
     try {
       var res = await reminderRepository.getDailyReminders(event.weekdaysSet);
       res.sort((a, b) => a.time.compareTo(b.time));
-      emit(state.copyWith(status: RequestStatus.done, reminder: res));
+      emit(state.copyWith(status: RequestStatus.done, reminders: res));
     } catch (e) {
-      emit(state.copyWith(status: RequestStatus.error, error: e.toString()));
+      emit(
+        state.copyWith(status: RequestStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 }

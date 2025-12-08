@@ -9,7 +9,7 @@ import 'package:reminders_app/features/weekday_box/presentation/cubit/selected_d
 
 class WeekdayBox extends StatefulWidget {
   final Weekday today;
-  WeekdayBox(this.today, {Key? key}) : super(key: key);
+  const WeekdayBox(this.today, {super.key});
 
   @override
   _WeekdayBoxState createState() => _WeekdayBoxState();
