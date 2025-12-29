@@ -6,9 +6,9 @@ class ReminderInit extends ReminderState {}
 
 class ReminderLoading extends ReminderState {}
 
-class ReminderSuccess extends ReminderState {
+class ReminderAdded extends ReminderState {
   final ReminderModel reminder;
-  ReminderSuccess(this.reminder);
+  ReminderAdded(this.reminder);
 }
 
 class ReminderDeleted extends ReminderState {}

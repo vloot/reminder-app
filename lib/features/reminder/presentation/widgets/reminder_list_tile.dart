@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reminders_app/core/themes/app_themes.dart';
 import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/reminder/presentation/form_launcher.dart';
@@ -10,12 +9,13 @@ import 'package:reminders_app/features/reminder/presentation/reminders_list/remi
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_event.dart';
 import 'package:reminders_app/features/reminder/presentation/widgets/confirmation.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
+import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
 
 class ReminderListTile extends StatefulWidget {
   final ReminderModel reminder;
-  final BuildContext parentContext;
+  final AppSettingsState settingsState;
 
-  const ReminderListTile(this.reminder, this.parentContext, {super.key});
+  const ReminderListTile(this.reminder, this.settingsState, {super.key});
 
   @override
   _ReminderListTileState createState() => _ReminderListTileState();
@@ -26,12 +26,12 @@ class _ReminderListTileState extends State<ReminderListTile> {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: currentTheme.secondaryColor,
+        color: Color(widget.settingsState.settings.secondaryColor),
         border: Border.all(color: Colors.transparent),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: currentTheme.shadowColor,
+            color: Color(widget.settingsState.settings.shadowColor),
             spreadRadius: 1,
             blurRadius: 4,
             offset: Offset(0, 2),
@@ -39,9 +39,9 @@ class _ReminderListTileState extends State<ReminderListTile> {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(vertical: 2),
         child: Theme(
-          data: Theme.of(widget.parentContext).copyWith(
+          data: Theme.of(context).copyWith(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
             hoverColor: Colors.transparent,
@@ -55,7 +55,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
             //   icon: Icon(
             //     Icons.check_circle,
             //     size: 30,
-            //     color: currentTheme.primaryColorAccent,
+            //     color: Color(widget.settingsState.settings.primaryColorAccent),
             //   ),
             // ),
             title: Container(
@@ -83,8 +83,15 @@ class _ReminderListTileState extends State<ReminderListTile> {
                                   widget.reminder.reminderDays.contains(
                                     Weekday.values[index],
                                   )
-                                  ? currentTheme.activeColor
-                                  : currentTheme.inactiveColor.withAlpha(100),
+                                  ? Color(
+                                      widget.settingsState.settings.activeColor,
+                                    )
+                                  : Color(
+                                      widget
+                                          .settingsState
+                                          .settings
+                                          .inactiveColor,
+                                    ).withAlpha(100),
                             ),
                           );
                         }),
@@ -97,7 +104,9 @@ class _ReminderListTileState extends State<ReminderListTile> {
                         child: Text(
                           widget.reminder.title,
                           style: TextStyle(
-                            color: currentTheme.textColor,
+                            color: Color(
+                              widget.settingsState.settings.textColor,
+                            ),
                             fontWeight: FontWeight.w500,
                             overflow: TextOverflow.visible,
                           ),
@@ -111,7 +120,10 @@ class _ReminderListTileState extends State<ReminderListTile> {
             trailing: Text(
               // IDEA add clock emoji before or after time
               '${widget.reminder.time.hour}:${(widget.reminder.time.minute).toString().padLeft(2, '0')}',
-              style: TextStyle(color: currentTheme.textColor, fontSize: 14),
+              style: TextStyle(
+                color: Color(widget.settingsState.settings.textColor),
+                fontSize: 14,
+              ),
             ),
             children: [
               Padding(
@@ -123,7 +135,9 @@ class _ReminderListTileState extends State<ReminderListTile> {
                   decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        color: currentTheme.textColor.withAlpha(120),
+                        color: Color(
+                          widget.settingsState.settings.textColor,
+                        ).withAlpha(120),
                         width: 1,
                       ),
                     ),
@@ -140,7 +154,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
                       child: Text(
                         widget.reminder.description ?? '',
                         style: TextStyle(
-                          color: currentTheme.textColor,
+                          color: Color(widget.settingsState.settings.textColor),
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                         ),
@@ -156,8 +170,10 @@ class _ReminderListTileState extends State<ReminderListTile> {
                               context,
                               ReminderFormType.edit,
                               'Editing',
+                              widget.settingsState,
                               submitCallback: (newReminder) {
-                                widget.parentContext.read<ReminderBloc>().add(
+                                // FIXME bug somewhere here, in which editing reminder breaks selection
+                                context.read<ReminderBloc>().add(
                                   EditReminderEvent(
                                     id: newReminder.id!,
                                     title: newReminder.title,
@@ -171,13 +187,19 @@ class _ReminderListTileState extends State<ReminderListTile> {
                             );
                           },
                           icon: Icon(Icons.edit_note_rounded),
-                          color: currentTheme.activeColor,
+                          color: Color(
+                            widget.settingsState.settings.activeColor,
+                          ),
                         ),
                         IconButton(
                           onPressed: () async {
-                            await showConfirmationModal();
+                            await showConfirmationModal(
+                              context.read<RemindersListBloc>(),
+                            );
                           },
-                          color: currentTheme.warningColor,
+                          color: Color(
+                            widget.settingsState.settings.warningColor,
+                          ),
                           icon: Icon(Icons.delete_outline_sharp),
                         ),
                       ],
@@ -192,20 +214,21 @@ class _ReminderListTileState extends State<ReminderListTile> {
     );
   }
 
-  Future<void> showConfirmationModal() async {
+  Future<void> showConfirmationModal(RemindersListBloc bloc) async {
     showModalBottomSheet(
       showDragHandle: true,
-      context: widget.parentContext,
-      backgroundColor: currentTheme.backgroundOverlayColor,
-      builder: (context) {
+      context: context,
+      backgroundColor: Color(
+        widget.settingsState.settings.backgroundOverlayColor,
+      ),
+      builder: (_) {
         return Confirmation(
+          settingsState: widget.settingsState,
           onConfirmCallback: () async {
-            widget.parentContext.read<ReminderBloc>().add(
+            context.read<ReminderBloc>().add(
               DeleteReminderEvent(reminder: widget.reminder),
             );
-            widget.parentContext.read<RemindersListBloc>().add(
-              GetRemindersListEvent(),
-            );
+            bloc.add(GetRemindersListEvent());
             Navigator.pop(context, true);
           },
           onCancelCallback: () async {

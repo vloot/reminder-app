@@ -6,7 +6,7 @@ import 'package:timezone/timezone.dart';
 import 'package:flutter/material.dart';
 
 class NotiTestClass extends StatefulWidget {
-  NotiTestClass({Key? key}) : super(key: key);
+  const NotiTestClass({super.key});
 
   @override
   _NotiTestClassState createState() => _NotiTestClassState();

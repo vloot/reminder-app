@@ -1,16 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:reminders_app/core/themes/app_themes.dart';
+import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
 
 class Confirmation extends StatelessWidget {
   final Future<void> Function() onConfirmCallback;
   final Future<void> Function() onCancelCallback;
+  final AppSettingsState settingsState;
 
   const Confirmation({
     required this.onConfirmCallback,
     required this.onCancelCallback,
     super.key,
+    required this.settingsState,
   });
 
   @override
@@ -33,15 +35,15 @@ class Confirmation extends StatelessWidget {
               buildButton(
                 context,
                 'Delete',
-                currentTheme.secondaryColor,
-                currentTheme.warningColor,
+                Color(settingsState.settings.secondaryColor),
+                Color(settingsState.settings.warningColor),
                 onConfirmCallback,
               ),
               buildButton(
                 context,
                 'Cancel',
-                currentTheme.secondaryColor,
-                currentTheme.inactiveColor,
+                Color(settingsState.settings.secondaryColor),
+                Color(settingsState.settings.inactiveColor),
                 onCancelCallback,
               ),
             ],

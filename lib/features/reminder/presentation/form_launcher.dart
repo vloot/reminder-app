@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:reminders_app/core/themes/app_themes.dart';
 import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
+import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
 
 Future showReminderForm(
   BuildContext context,
   ReminderFormType formType,
-  String titleText, {
+  String titleText,
+  AppSettingsState settingsState, {
   required void Function(ReminderModel) submitCallback,
   ReminderModel? reminderModel,
 }) async {
   showModalBottomSheet(
-    backgroundColor: currentTheme.backgroundOverlayColor,
+    backgroundColor: Color(settingsState.settings.backgroundOverlayColor),
     isScrollControlled: true,
     showDragHandle: true,
     context: context,
@@ -22,6 +23,7 @@ Future showReminderForm(
         titleText,
         context,
         submitCallback,
+        settingsState,
         reminderModel: reminderModel,
       );
     },

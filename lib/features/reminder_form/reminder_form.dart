@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:reminders_app/core/themes/app_themes.dart';
 import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
+import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
 
 class ReminderForm extends StatefulWidget {
   final ReminderFormType formType;
   final String title;
   final BuildContext parentContext;
   final void Function(ReminderModel) submitCallback;
+  final AppSettingsState settingsState;
 
   final ReminderModel? reminderModel;
 
@@ -17,7 +18,8 @@ class ReminderForm extends StatefulWidget {
     this.formType,
     this.title,
     this.parentContext,
-    this.submitCallback, {
+    this.submitCallback,
+    this.settingsState, {
     this.reminderModel,
     super.key,
   });
@@ -123,12 +125,16 @@ class _ReminderFormState extends State<ReminderForm> {
                       );
                     },
                     style: FilledButton.styleFrom(
-                      backgroundColor: currentTheme.primaryColor,
+                      backgroundColor: Color(
+                        widget.settingsState.settings.primaryColor,
+                      ),
                     ),
                     child: Text(
                       'Save reminder',
                       style: TextStyle(
-                        color: currentTheme.secondaryColor,
+                        color: Color(
+                          widget.settingsState.settings.secondaryColor,
+                        ),
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
                       ),
@@ -160,19 +166,25 @@ class _ReminderFormState extends State<ReminderForm> {
         maxLines: maxLines,
         maxLength: maxLength,
         maxLengthEnforcement: MaxLengthEnforcement.enforced,
-        cursorColor: currentTheme.primaryColor,
+        cursorColor: Color(widget.settingsState.settings.primaryColor),
+        textCapitalization: TextCapitalization.sentences,
         style: TextStyle(
-          color: currentTheme.textColor,
+          color: Color(widget.settingsState.settings.textColor),
           fontWeight: FontWeight.w600,
         ),
         decoration: InputDecoration(
           labelText: hintText,
-          labelStyle: TextStyle(color: currentTheme.textColor, fontSize: 18),
+          labelStyle: TextStyle(
+            color: Color(widget.settingsState.settings.textColor),
+            fontSize: 18,
+          ),
           hintFadeDuration: Duration(seconds: 1),
           contentPadding: EdgeInsets.fromLTRB(12, 16, 12, 16),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: currentTheme.primaryColor),
+            borderSide: BorderSide(
+              color: Color(widget.settingsState.settings.primaryColor),
+            ),
           ),
           counterText: "",
         ),
@@ -183,13 +195,13 @@ class _ReminderFormState extends State<ReminderForm> {
   Widget buildTimeInput(BuildContext context) {
     final style = TextStyle(
       fontSize: 24,
-      color: currentTheme.textColor,
+      color: Color(widget.settingsState.settings.textColor),
       fontWeight: FontWeight.w600,
     );
     return TextButton(
       style: TextButton.styleFrom(
         splashFactory: NoSplash.splashFactory,
-        overlayColor: currentTheme.transparent,
+        overlayColor: Color(widget.settingsState.settings.transparent),
       ),
       onPressed: () async {
         final time = await showTimePicker(
@@ -217,7 +229,7 @@ class _ReminderFormState extends State<ReminderForm> {
             Icons.more_time_rounded,
             fontWeight: FontWeight.bold,
             size: 24,
-            color: currentTheme.textColor,
+            color: Color(widget.settingsState.settings.textColor),
           ),
         ],
       ),
@@ -259,8 +271,8 @@ class _ReminderFormState extends State<ReminderForm> {
       child: ChoiceChip(
         side: BorderSide(
           color: selected
-              ? currentTheme.transparent
-              : currentTheme.inactiveColor,
+              ? Color(widget.settingsState.settings.transparent)
+              : Color(widget.settingsState.settings.inactiveColor),
         ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadiusGeometry.circular(100),
@@ -273,13 +285,13 @@ class _ReminderFormState extends State<ReminderForm> {
               style: TextStyle(
                 shadows: [
                   Shadow(
-                    color: currentTheme.shadowColor,
+                    color: Color(widget.settingsState.settings.shadowColor),
                     offset: Offset(0, 0.5),
                   ),
                 ],
                 color: selected
-                    ? currentTheme.secondaryColor
-                    : currentTheme.textColor,
+                    ? Color(widget.settingsState.settings.secondaryColor)
+                    : Color(widget.settingsState.settings.textColor),
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -287,8 +299,8 @@ class _ReminderFormState extends State<ReminderForm> {
         ),
         selected: selected,
         showCheckmark: false,
-        selectedColor: currentTheme.activeColor,
-        disabledColor: currentTheme.inactiveColor,
+        selectedColor: Color(widget.settingsState.settings.activeColor),
+        disabledColor: Color(widget.settingsState.settings.activeColor),
         onSelected: (value) {
           setState(() {
             if (value) {

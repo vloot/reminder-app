@@ -37,7 +37,7 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
 
       await notificationRepository.scheduleNotification(newReminder);
 
-      emit(ReminderSuccess(newReminder));
+      emit(ReminderAdded(newReminder));
     } catch (err) {
       emit(ReminderFailure(err.toString()));
     }

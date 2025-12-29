@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reminders_app/core/themes/app_themes.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_event.dart';
+import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
 import 'package:reminders_app/features/weekday_box/presentation/cubit/reminder_mode_cubit.dart';
 import 'package:reminders_app/features/weekday_box/presentation/cubit/selected_days_cubit.dart';
 
 class WeekdayBox extends StatefulWidget {
   final Weekday today;
-  const WeekdayBox(this.today, {super.key});
+  final AppSettingsState settingsState;
+  const WeekdayBox(this.today, this.settingsState, {super.key});
 
   @override
   _WeekdayBoxState createState() => _WeekdayBoxState();
@@ -49,13 +50,23 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                                 decoration: BoxDecoration(
                                   boxShadow: [
                                     BoxShadow(
-                                      color: currentTheme.shadowColor,
+                                      color: Color(
+                                        widget
+                                            .settingsState
+                                            .settings
+                                            .shadowColor,
+                                      ),
                                       spreadRadius: 1,
                                       blurRadius: 10,
                                       offset: Offset(0, 2),
                                     ),
                                   ],
-                                  color: currentTheme.secondaryColor,
+                                  color: Color(
+                                    widget
+                                        .settingsState
+                                        .settings
+                                        .secondaryColor,
+                                  ),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Padding(
@@ -126,13 +137,17 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: currentTheme.shadowColor,
+                          color: Color(
+                            widget.settingsState.settings.shadowColor,
+                          ),
                           spreadRadius: 0.1,
                           blurRadius: 10,
                           offset: Offset(0, 0),
                         ),
                       ],
-                      color: currentTheme.secondaryColor,
+                      color: Color(
+                        widget.settingsState.settings.secondaryColor,
+                      ),
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(16),
                         bottomRight: Radius.circular(16),
@@ -197,13 +212,16 @@ class _WeekdayBoxState extends State<WeekdayBox> {
               decoration: TextDecoration.combine([TextDecoration.underline]),
               decorationThickness: 3,
               decorationColor: isActive
-                  ? currentTheme.primaryColorAccent
-                  : currentTheme.transparent,
+                  ? Color(widget.settingsState.settings.primaryColorAccent)
+                  : Color(widget.settingsState.settings.transparent),
               color: Colors.transparent,
               fontSize: 15,
               fontWeight: FontWeight.w700,
               shadows: <Shadow>[
-                Shadow(color: currentTheme.textColor, offset: Offset(0, -5)),
+                Shadow(
+                  color: Color(widget.settingsState.settings.textColor),
+                  offset: Offset(0, -5),
+                ),
               ],
             ),
             duration: Duration(milliseconds: 100),
@@ -231,11 +249,11 @@ class _WeekdayBoxState extends State<WeekdayBox> {
       selector: (state) => state.selected.contains(weekday),
       builder: (context, containsThisDay) {
         Color borderColor = containsThisDay
-            ? currentTheme.primaryColor
-            : currentTheme.inactiveColor;
+            ? Color(widget.settingsState.settings.primaryColor)
+            : Color(widget.settingsState.settings.inactiveColor);
         Color bgColor = isToday
-            ? currentTheme.primaryColor
-            : currentTheme.secondaryColor;
+            ? Color(widget.settingsState.settings.primaryColor)
+            : Color(widget.settingsState.settings.secondaryColor);
 
         return SizedBox(
           width: size,
@@ -282,7 +300,7 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                 height: size - 5,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: currentTheme.secondaryColor,
+                    color: Color(widget.settingsState.settings.secondaryColor),
                     borderRadius: BorderRadius.circular(radius),
                   ),
                   child: SizedBox(
@@ -302,8 +320,15 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                               fontSize: 21,
                               fontWeight: FontWeight.w700,
                               color: isToday
-                                  ? currentTheme.secondaryColor
-                                  : currentTheme.textColor,
+                                  ? Color(
+                                      widget
+                                          .settingsState
+                                          .settings
+                                          .secondaryColor,
+                                    )
+                                  : Color(
+                                      widget.settingsState.settings.textColor,
+                                    ),
                             ),
                           ),
                         ),

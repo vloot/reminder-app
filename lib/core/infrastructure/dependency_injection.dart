@@ -8,10 +8,13 @@ import 'package:reminders_app/features/reminder/data/repository/reminder_reposit
 import 'package:reminders_app/features/reminder/domain/repository/reminder_repository.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_bloc.dart';
+import 'package:reminders_app/features/settings/data/repository/app_settings_repository_impl.dart';
+import 'package:reminders_app/features/settings/domain/repository/app_settings_repository.dart';
+import 'package:reminders_app/features/settings/presentation/app_settings_bloc.dart';
 
 var getIt = GetIt.instance;
 
-void setupDI() {
+Future<void> setupDI() async {
   // Database
   getIt.registerSingleton(Database());
 
@@ -20,6 +23,20 @@ void setupDI() {
   getIt.registerLazySingleton<NotificationRepository>(
     () => NotificationRepositoryImpl(notificationService: getIt()),
   );
+
+  // Settings
+  getIt.registerSingletonAsync<AppSettingsRepository>(() async {
+    final repo = AppSettingsRepositoryImpl();
+    await repo.init();
+    return repo;
+  });
+
+  getIt.registerSingletonAsync<AppSettingsBloc>(() async {
+    final repo = await getIt.getAsync<AppSettingsRepository>();
+    final initialSettings = await repo.load();
+
+    return AppSettingsBloc(repo, settings: initialSettings);
+  }, dependsOn: [AppSettingsRepository]);
 
   // Reminders list
   getIt.registerLazySingleton(() => RemindersDatasource(database: getIt()));
@@ -37,4 +54,6 @@ void setupDI() {
       notificationRepository: getIt<NotificationRepository>(),
     ),
   );
+
+  await getIt.allReady();
 }
