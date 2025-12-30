@@ -33,14 +33,12 @@ class Confirmation extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               buildButton(
-                context,
                 'Delete',
                 Color(settingsState.settings.secondaryColor),
                 Color(settingsState.settings.warningColor),
                 onConfirmCallback,
               ),
               buildButton(
-                context,
                 'Cancel',
                 Color(settingsState.settings.secondaryColor),
                 Color(settingsState.settings.inactiveColor),
@@ -55,7 +53,6 @@ class Confirmation extends StatelessWidget {
   }
 
   SizedBox buildButton(
-    BuildContext context,
     String text,
     Color textColor,
     Color backgroundColor,

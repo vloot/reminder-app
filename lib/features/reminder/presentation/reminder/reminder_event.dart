@@ -38,5 +38,3 @@ class DeleteReminderEvent extends ReminderEvent {
 
   DeleteReminderEvent({required this.reminder});
 }
-
-class GetRemindersEvent extends ReminderEvent {}

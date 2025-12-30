@@ -11,12 +11,14 @@ class ReminderAdded extends ReminderState {
   ReminderAdded(this.reminder);
 }
 
-class ReminderDeleted extends ReminderState {}
+class ReminderEdited extends ReminderState {
+  final ReminderModel reminder;
+  ReminderEdited(this.reminder);
+}
 
-class ReminderEdited extends ReminderState {}
+class ReminderDeleted extends ReminderState {}
 
 class ReminderFailure extends ReminderState {
   final String errorMessage;
-
   ReminderFailure(this.errorMessage);
 }

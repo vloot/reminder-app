@@ -19,12 +19,16 @@ class RemindersListBloc extends Bloc<RemindersListEvent, RemindersListState> {
     GetRemindersListEvent event,
     Emitter<RemindersListState> emit,
   ) async {
-    emit(state.copyWith(status: RequestStatus.loading));
+    emit(state.copyWith(status: RequestStatus.init));
     try {
-      var res = await reminderRepository.getReminders();
-      await Future.delayed(const Duration(milliseconds: 400)); // debounce time
-      res.sort((a, b) => a.time.compareTo(b.time));
-      emit(state.copyWith(status: RequestStatus.done, reminders: res));
+      final resultsFuture = reminderRepository.getReminders();
+      await Future.delayed(const Duration(milliseconds: 125)); // debounce time
+      emit(state.copyWith(status: RequestStatus.loading));
+
+      final results = await resultsFuture;
+      results.sort((a, b) => a.time.compareTo(b.time));
+
+      emit(state.copyWith(status: RequestStatus.done, reminders: results));
     } catch (e) {
       emit(
         state.copyWith(status: RequestStatus.error, errorMessage: e.toString()),
@@ -36,11 +40,17 @@ class RemindersListBloc extends Bloc<RemindersListEvent, RemindersListState> {
     GetRemindersDayListEvent event,
     Emitter<RemindersListState> emit,
   ) async {
-    emit(state.copyWith(status: RequestStatus.loading));
+    emit(state.copyWith(status: RequestStatus.init));
     try {
-      var res = await reminderRepository.getDailyReminders(event.weekdaysSet);
-      res.sort((a, b) => a.time.compareTo(b.time));
-      emit(state.copyWith(status: RequestStatus.done, reminders: res));
+      final resultsFuture = reminderRepository.getDailyReminders(
+        event.weekdaysSet,
+      );
+      await Future.delayed(const Duration(milliseconds: 125)); // debounce time
+      emit(state.copyWith(status: RequestStatus.loading));
+
+      final results = await resultsFuture;
+      results.sort((a, b) => a.time.compareTo(b.time));
+      emit(state.copyWith(status: RequestStatus.done, reminders: results));
     } catch (e) {
       emit(
         state.copyWith(status: RequestStatus.error, errorMessage: e.toString()),

@@ -57,7 +57,7 @@ class ReminderBloc extends Bloc<ReminderEvent, ReminderState> {
     emit(ReminderLoading());
     try {
       await reminderRepository.editReminder(reminder.toEntity());
-      emit(ReminderEdited());
+      emit(ReminderEdited(reminder));
     } catch (err) {
       emit(ReminderFailure(err.toString()));
     }

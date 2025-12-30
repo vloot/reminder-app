@@ -8,7 +8,6 @@ import 'package:reminders_app/features/settings/presentation/app_settings_state.
 class ReminderForm extends StatefulWidget {
   final ReminderFormType formType;
   final String title;
-  final BuildContext parentContext;
   final void Function(ReminderModel) submitCallback;
   final AppSettingsState settingsState;
 
@@ -17,7 +16,6 @@ class ReminderForm extends StatefulWidget {
   const ReminderForm(
     this.formType,
     this.title,
-    this.parentContext,
     this.submitCallback,
     this.settingsState, {
     this.reminderModel,
@@ -114,6 +112,7 @@ class _ReminderFormState extends State<ReminderForm> {
                   SizedBox(height: 12),
                   FilledButton(
                     onPressed: () {
+                      Navigator.pop(context);
                       widget.submitCallback(
                         ReminderModel(
                           id: widget.reminderModel?.id,

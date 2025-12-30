@@ -21,7 +21,6 @@ Future showReminderForm(
       return ReminderForm(
         formType,
         titleText,
-        context,
         submitCallback,
         settingsState,
         reminderModel: reminderModel,

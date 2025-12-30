@@ -6,7 +6,6 @@ import 'package:reminders_app/features/reminder/presentation/form_launcher.dart'
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_event.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_bloc.dart';
-import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_event.dart';
 import 'package:reminders_app/features/reminder/presentation/widgets/confirmation.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
 import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
@@ -228,11 +227,10 @@ class _ReminderListTileState extends State<ReminderListTile> {
             context.read<ReminderBloc>().add(
               DeleteReminderEvent(reminder: widget.reminder),
             );
-            bloc.add(GetRemindersListEvent());
-            Navigator.pop(context, true);
+            Navigator.pop(context);
           },
           onCancelCallback: () async {
-            Navigator.pop(context, true);
+            Navigator.pop(context);
           },
         );
       },

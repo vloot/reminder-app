@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminders_app/core/infrastructure/dependency_injection.dart';
-import 'package:reminders_app/features/reminder/presentation/reminder/reminder_page.dart';
+import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_page.dart';
 import 'package:reminders_app/features/settings/domain/entities/app_settings_entity.dart';
 import 'package:reminders_app/features/settings/presentation/app_settings_bloc.dart';
 import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
