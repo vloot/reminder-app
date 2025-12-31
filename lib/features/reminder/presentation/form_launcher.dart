@@ -13,7 +13,7 @@ Future showReminderForm(
   ReminderModel? reminderModel,
 }) async {
   showModalBottomSheet(
-    backgroundColor: Color(settingsState.settings.backgroundOverlayColor),
+    backgroundColor: Color(settingsState.settings.theme.backgroundOverlayColor),
     isScrollControlled: true,
     showDragHandle: true,
     context: context,

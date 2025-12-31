@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:reminders_app/core/shared/weekday_info.dart';
 import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
 import 'package:reminders_app/features/reminder/presentation/form_launcher.dart';
@@ -12,6 +13,7 @@ import 'package:reminders_app/features/settings/presentation/app_settings_state.
 
 class ReminderListTile extends StatefulWidget {
   final List<WeekdayInfo> days;
+  final String timeFormat;
   final ReminderModel reminder;
   final AppSettingsState settingsState;
 
@@ -20,6 +22,7 @@ class ReminderListTile extends StatefulWidget {
     this.settingsState, {
     super.key,
     required this.days,
+    required this.timeFormat,
   });
 
   @override
@@ -31,12 +34,12 @@ class _ReminderListTileState extends State<ReminderListTile> {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: Color(widget.settingsState.settings.secondaryColor),
+        color: Color(widget.settingsState.settings.theme.secondaryColor),
         border: Border.all(color: Colors.transparent),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Color(widget.settingsState.settings.shadowColor),
+            color: Color(widget.settingsState.settings.theme.shadowColor),
             spreadRadius: 1,
             blurRadius: 4,
             offset: Offset(0, 2),
@@ -60,7 +63,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
             //   icon: Icon(
             //     Icons.check_circle,
             //     size: 30,
-            //     color: Color(widget.settingsState.settings.primaryColorAccent),
+            //     color: Color(widget.settingsState.settings.theme.primaryColorAccent),
             //   ),
             // ),
             title: Container(
@@ -89,12 +92,17 @@ class _ReminderListTileState extends State<ReminderListTile> {
                                     widget.days[index].weekday,
                                   )
                                   ? Color(
-                                      widget.settingsState.settings.activeColor,
+                                      widget
+                                          .settingsState
+                                          .settings
+                                          .theme
+                                          .activeColor,
                                     )
                                   : Color(
                                       widget
                                           .settingsState
                                           .settings
+                                          .theme
                                           .inactiveColor,
                                     ).withAlpha(100),
                             ),
@@ -110,7 +118,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
                           widget.reminder.title,
                           style: TextStyle(
                             color: Color(
-                              widget.settingsState.settings.textColor,
+                              widget.settingsState.settings.theme.textColor,
                             ),
                             fontWeight: FontWeight.w500,
                             overflow: TextOverflow.visible,
@@ -124,9 +132,9 @@ class _ReminderListTileState extends State<ReminderListTile> {
             ),
             trailing: Text(
               // IDEA add clock emoji before or after time
-              '${widget.reminder.time.hour}:${(widget.reminder.time.minute).toString().padLeft(2, '0')}',
+              DateFormat(widget.timeFormat).format(widget.reminder.time),
               style: TextStyle(
-                color: Color(widget.settingsState.settings.textColor),
+                color: Color(widget.settingsState.settings.theme.textColor),
                 fontSize: 14,
               ),
             ),
@@ -141,7 +149,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
                     border: Border(
                       bottom: BorderSide(
                         color: Color(
-                          widget.settingsState.settings.textColor,
+                          widget.settingsState.settings.theme.textColor,
                         ).withAlpha(120),
                         width: 1,
                       ),
@@ -159,7 +167,9 @@ class _ReminderListTileState extends State<ReminderListTile> {
                       child: Text(
                         widget.reminder.description ?? '',
                         style: TextStyle(
-                          color: Color(widget.settingsState.settings.textColor),
+                          color: Color(
+                            widget.settingsState.settings.theme.textColor,
+                          ),
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                         ),
@@ -193,7 +203,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
                           },
                           icon: Icon(Icons.edit_note_rounded),
                           color: Color(
-                            widget.settingsState.settings.activeColor,
+                            widget.settingsState.settings.theme.activeColor,
                           ),
                         ),
                         IconButton(
@@ -203,7 +213,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
                             );
                           },
                           color: Color(
-                            widget.settingsState.settings.warningColor,
+                            widget.settingsState.settings.theme.warningColor,
                           ),
                           icon: Icon(Icons.delete_outline_sharp),
                         ),
@@ -224,7 +234,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
       showDragHandle: true,
       context: context,
       backgroundColor: Color(
-        widget.settingsState.settings.backgroundOverlayColor,
+        widget.settingsState.settings.theme.backgroundOverlayColor,
       ),
       builder: (_) {
         return Confirmation(

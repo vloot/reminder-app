@@ -20,7 +20,7 @@ class AppSettingsBloc extends Bloc<AppSettingsEvent, AppSettingsState> {
   ) async {
     emit(
       state.copyWith(
-        settings: AppSettingsModel.defaultSettingsDark.toEntity(),
+        settings: AppSettingsModel.defaultSettings.toEntity(),
         isLoading: true,
       ),
     );

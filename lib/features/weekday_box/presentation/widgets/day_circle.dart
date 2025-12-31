@@ -36,11 +36,11 @@ class DayCircle extends StatelessWidget {
       selector: (state) => state.selected.contains(weekday),
       builder: (context, containsThisDay) {
         Color borderColor = containsThisDay
-            ? Color(settingsState.settings.primaryColor)
-            : Color(settingsState.settings.inactiveColor);
+            ? Color(settingsState.settings.theme.primaryColor)
+            : Color(settingsState.settings.theme.inactiveColor);
         Color bgColor = isToday
-            ? Color(settingsState.settings.primaryColor)
-            : Color(settingsState.settings.secondaryColor);
+            ? Color(settingsState.settings.theme.primaryColor)
+            : Color(settingsState.settings.theme.secondaryColor);
 
         return SizedBox(
           width: size,
@@ -87,7 +87,7 @@ class DayCircle extends StatelessWidget {
                 height: size - 5,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    color: Color(settingsState.settings.secondaryColor),
+                    color: Color(settingsState.settings.theme.secondaryColor),
                     borderRadius: BorderRadius.circular(radius),
                   ),
                   child: SizedBox(
@@ -107,8 +107,15 @@ class DayCircle extends StatelessWidget {
                               fontSize: 21,
                               fontWeight: FontWeight.w700,
                               color: isToday
-                                  ? Color(settingsState.settings.secondaryColor)
-                                  : Color(settingsState.settings.textColor),
+                                  ? Color(
+                                      settingsState
+                                          .settings
+                                          .theme
+                                          .secondaryColor,
+                                    )
+                                  : Color(
+                                      settingsState.settings.theme.textColor,
+                                    ),
                             ),
                           ),
                         ),

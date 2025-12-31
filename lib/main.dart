@@ -19,7 +19,7 @@ void main() async {
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
               colorScheme: ColorScheme.fromSeed(
-                seedColor: Color(state.settings.primaryColor),
+                seedColor: Color(state.settings.theme.primaryColor),
                 brightness: state.settings.appBrightness == AppBrightness.light
                     ? Brightness.light
                     : Brightness.dark,

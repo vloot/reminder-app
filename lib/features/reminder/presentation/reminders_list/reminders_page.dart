@@ -48,7 +48,9 @@ class _RemindersPageState extends State<RemindersPage> {
           return BlocBuilder<AppSettingsBloc, AppSettingsState>(
             builder: (context, settingsState) {
               return Scaffold(
-                backgroundColor: Color(settingsState.settings.backgroundColor),
+                backgroundColor: Color(
+                  settingsState.settings.theme.backgroundColor,
+                ),
                 body: CustomScrollView(
                   slivers: [
                     ReminderAppBar(settingsState: settingsState, today: today),

@@ -53,6 +53,7 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                                         widget
                                             .settingsState
                                             .settings
+                                            .theme
                                             .shadowColor,
                                       ),
                                       spreadRadius: 1,
@@ -64,6 +65,7 @@ class _WeekdayBoxState extends State<WeekdayBox> {
                                     widget
                                         .settingsState
                                         .settings
+                                        .theme
                                         .secondaryColor,
                                   ),
                                   borderRadius: BorderRadius.circular(16),

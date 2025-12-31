@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminders_app/core/shared/request_status.dart';
+import 'package:reminders_app/core/shared/time_format.dart';
 import 'package:reminders_app/core/shared/weekday_info.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_state.dart';
@@ -9,6 +10,7 @@ import 'package:reminders_app/features/reminder/presentation/reminders_list/remi
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_state.dart';
 import 'package:reminders_app/features/reminder/presentation/widgets/reminder_list_tile.dart';
 import 'package:reminders_app/features/reminder/presentation/widgets/shimmer_tile.dart';
+import 'package:reminders_app/features/settings/domain/entities/app_settings_entity.dart';
 import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
 import 'package:reminders_app/features/weekday_box/presentation/cubit/reminder_mode_cubit.dart';
 import 'package:reminders_app/features/weekday_box/presentation/cubit/selected_days_cubit.dart';
@@ -81,6 +83,9 @@ class _RelindersListState extends State<RemindersList> {
                     state.reminders![index],
                     widget.settingsState,
                     days: days,
+                    timeFormat: dateFormatFor(
+                      widget.settingsState.settings.timeFormat,
+                    ),
                   ),
                 );
               }, childCount: state.reminders?.length ?? 0),

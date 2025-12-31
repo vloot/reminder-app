@@ -7,7 +7,6 @@ class SettingsToggle<T> extends StatefulWidget {
   final IconData iconData;
   final bool multiSelection;
   final bool emptySelection;
-  // final void Function(T) onSelectionChanged;
   final ValueChanged<T> onSelectionChanged;
 
   const SettingsToggle({
@@ -71,7 +70,21 @@ class _SettingsToggleState<T> extends State<SettingsToggle<T>> {
     final res = <ButtonSegment<T>>[];
     for (var key in widget.segmentsMap.keys) {
       res.add(
-        ButtonSegment<T>(value: key, label: Text(widget.segmentsMap[key]!)),
+        ButtonSegment<T>(
+          value: key,
+          label: Container(
+            constraints: BoxConstraints(
+              minWidth: 60,
+              minHeight: double.infinity,
+            ),
+            child: Center(
+              child: Text(
+                widget.segmentsMap[key]!,
+                style: TextStyle(fontSize: 14),
+              ),
+            ),
+          ),
+        ),
       );
     }
     return res;

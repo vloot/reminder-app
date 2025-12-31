@@ -1,11 +1,10 @@
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
-import 'package:reminders_app/features/settings/domain/entities/app_settings_entity.dart';
 
 class WeekdayInfo {
   final Weekday weekday;
 
   String fullName() => weekday.name;
-  String shortName() => weekday.name.substring(0, 3);
+  String abbreviation() => weekday.name.substring(0, 3);
   String firstLetter() => weekday.name[0].toUpperCase();
 
   WeekdayInfo({required this.weekday});
@@ -29,3 +28,5 @@ List<WeekdayInfo> getOrderedDays(StartingDay startingDay) {
   ];
   return days;
 }
+
+enum StartingDay { monday, sunday }

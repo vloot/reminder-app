@@ -34,14 +34,14 @@ class Confirmation extends StatelessWidget {
             children: [
               buildButton(
                 'Delete',
-                Color(settingsState.settings.secondaryColor),
-                Color(settingsState.settings.warningColor),
+                Color(settingsState.settings.theme.secondaryColor),
+                Color(settingsState.settings.theme.warningColor),
                 onConfirmCallback,
               ),
               buildButton(
                 'Cancel',
-                Color(settingsState.settings.secondaryColor),
-                Color(settingsState.settings.inactiveColor),
+                Color(settingsState.settings.theme.secondaryColor),
+                Color(settingsState.settings.theme.inactiveColor),
                 onCancelCallback,
               ),
             ],

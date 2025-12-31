@@ -34,7 +34,9 @@ class _ReminderAppBarState extends State<ReminderAppBar> {
                 child: Text(
                   'RemindMe',
                   style: TextStyle(
-                    color: Color(widget.settingsState.settings.secondaryColor),
+                    color: Color(
+                      widget.settingsState.settings.theme.secondaryColor,
+                    ),
                     fontWeight: FontWeight.bold,
                     fontSize: 26,
                   ),
@@ -48,15 +50,14 @@ class _ReminderAppBarState extends State<ReminderAppBar> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            SettingsPage(widget.settingsState),
-                      ),
+                      MaterialPageRoute(builder: (context) => SettingsPage()),
                     );
                   },
                   icon: Icon(
                     Icons.settings_sharp,
-                    color: Color(widget.settingsState.settings.secondaryColor),
+                    color: Color(
+                      widget.settingsState.settings.theme.secondaryColor,
+                    ),
                     size: 30,
                   ),
                 ),
@@ -72,7 +73,7 @@ class _ReminderAppBarState extends State<ReminderAppBar> {
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         background: Material(
-          color: Color(widget.settingsState.settings.backgroundColor),
+          color: Color(widget.settingsState.settings.theme.backgroundColor),
           child: Stack(
             clipBehavior: Clip.none,
             children: [
@@ -80,10 +81,14 @@ class _ReminderAppBarState extends State<ReminderAppBar> {
                 padding: EdgeInsets.only(left: 15, right: 15, bottom: 15),
                 constraints: BoxConstraints.expand(height: size.height * 0.2),
                 decoration: BoxDecoration(
-                  color: Color(widget.settingsState.settings.primaryColor),
+                  color: Color(
+                    widget.settingsState.settings.theme.primaryColor,
+                  ),
                   border: Border.symmetric(
                     vertical: BorderSide(
-                      color: Color(widget.settingsState.settings.primaryColor),
+                      color: Color(
+                        widget.settingsState.settings.theme.primaryColor,
+                      ),
                       width: 2,
                     ),
                   ),
@@ -103,7 +108,7 @@ class _ReminderAppBarState extends State<ReminderAppBar> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      // color: Color(settingsState.settings.backgroundColor),
+                      // color: Color(settingsState.settings.theme.backgroundColor),
                     ),
                     constraints: BoxConstraints.expand(
                       height: size.height * 0.12,
@@ -116,7 +121,7 @@ class _ReminderAppBarState extends State<ReminderAppBar> {
           ),
         ),
       ),
-      backgroundColor: Color(widget.settingsState.settings.primaryColor),
+      backgroundColor: Color(widget.settingsState.settings.theme.primaryColor),
     );
   }
 }

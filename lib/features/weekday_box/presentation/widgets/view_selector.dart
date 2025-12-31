@@ -36,13 +36,15 @@ class ViewSelector extends StatelessWidget {
                     decoration: BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: Color(settingsState.settings.shadowColor),
+                          color: Color(
+                            settingsState.settings.theme.shadowColor,
+                          ),
                           spreadRadius: 0.1,
                           blurRadius: 10,
                           offset: Offset(0, 0),
                         ),
                       ],
-                      color: Color(settingsState.settings.secondaryColor),
+                      color: Color(settingsState.settings.theme.secondaryColor),
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(16),
                         bottomRight: Radius.circular(16),
@@ -105,14 +107,14 @@ class ViewSelector extends StatelessWidget {
               decoration: TextDecoration.combine([TextDecoration.underline]),
               decorationThickness: 3,
               decorationColor: isActive
-                  ? Color(settingsState.settings.primaryColorAccent)
-                  : Color(settingsState.settings.transparent),
+                  ? Color(settingsState.settings.theme.primaryColorAccent)
+                  : Color(settingsState.settings.theme.transparent),
               color: Colors.transparent,
               fontSize: 15,
               fontWeight: FontWeight.w700,
               shadows: <Shadow>[
                 Shadow(
-                  color: Color(settingsState.settings.textColor),
+                  color: Color(settingsState.settings.theme.textColor),
                   offset: Offset(0, -5),
                 ),
               ],

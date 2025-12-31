@@ -18,7 +18,7 @@ class AppSettingsRepositoryImpl implements AppSettingsRepository {
     final data = prefs.getString(AppSettingsKeys.appSettings);
 
     if (data == null) {
-      return AppSettingsModel.defaultSettingsDark.toEntity();
+      return AppSettingsModel.defaultSettings.toEntity();
     }
 
     return AppSettingsModel.fromJson(jsonDecode(data)).toEntity();

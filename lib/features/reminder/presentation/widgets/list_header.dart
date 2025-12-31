@@ -52,14 +52,14 @@ class _ListHeaderState extends State<ListHeader> {
                 Text(
                   'Add reminder',
                   style: TextStyle(
-                    color: Color(widget.settingsState.settings.textColor),
+                    color: Color(widget.settingsState.settings.theme.textColor),
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Icon(
                   Icons.add,
-                  color: Color(widget.settingsState.settings.textColor),
+                  color: Color(widget.settingsState.settings.theme.textColor),
                   fontWeight: FontWeight.bold,
                   size: 30,
                 ),
