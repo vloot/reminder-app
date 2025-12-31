@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reminders_app/core/shared/weekday_info.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
 import 'package:reminders_app/features/weekday_box/presentation/cubit/reminder_mode_cubit.dart';
@@ -90,69 +91,23 @@ class _WeekdayBoxState extends State<WeekdayBox> {
   Widget buildDayCircles(BoxConstraints constraints) {
     final mode = context.watch<ReminderModeCubit>().state;
 
-    final days = [
-      DayCircle(
-        'M',
-        Weekday.monday,
+    final days = getOrderedDays(widget.settingsState.settings.startingDay);
+    final daysUI = List.generate(
+      7,
+      (index) => DayCircle(
+        days[index].firstLetter(),
+        days[index].weekday,
         widget.today,
         mode,
         constraints,
         widget.settingsState,
       ),
-      DayCircle(
-        'T',
-        Weekday.tuesday,
-        widget.today,
-        mode,
-        constraints,
-        widget.settingsState,
-      ),
-      DayCircle(
-        'W',
-        Weekday.wednesday,
-        widget.today,
-        mode,
-        constraints,
-        widget.settingsState,
-      ),
-      DayCircle(
-        'T',
-        Weekday.thursday,
-        widget.today,
-        mode,
-        constraints,
-        widget.settingsState,
-      ),
-      DayCircle(
-        'F',
-        Weekday.friday,
-        widget.today,
-        mode,
-        constraints,
-        widget.settingsState,
-      ),
-      DayCircle(
-        'S',
-        Weekday.saturday,
-        widget.today,
-        mode,
-        constraints,
-        widget.settingsState,
-      ),
-      DayCircle(
-        'S',
-        Weekday.sunday,
-        widget.today,
-        mode,
-        constraints,
-        widget.settingsState,
-      ),
-    ];
+    );
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: days,
+      children: daysUI,
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:reminders_app/core/shared/weekday_info.dart';
 import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
@@ -236,6 +237,15 @@ class _ReminderFormState extends State<ReminderForm> {
   }
 
   Widget buildWeekdays() {
+    var days = getOrderedDays(widget.settingsState.settings.startingDay);
+    var daysUI = List.generate(
+      7,
+      (index) => buildWeekdayButton(
+        days[index].weekday,
+        days[index].shortName().toUpperCase(),
+      ),
+    );
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -243,21 +253,12 @@ class _ReminderFormState extends State<ReminderForm> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildWeekdayButton(Weekday.monday, "MON"),
-            buildWeekdayButton(Weekday.tuesday, "TUE"),
-            buildWeekdayButton(Weekday.wednesday, "WED"),
-            buildWeekdayButton(Weekday.thursday, "THU"),
-          ],
+          children: daysUI.sublist(0, 4),
         ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            buildWeekdayButton(Weekday.friday, "FRI"),
-            buildWeekdayButton(Weekday.saturday, "SAT"),
-            buildWeekdayButton(Weekday.sunday, "SUN"),
-          ],
+          children: daysUI.sublist(4),
         ),
       ],
     );

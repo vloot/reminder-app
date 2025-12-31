@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reminders_app/core/shared/weekday_info.dart';
 import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
-import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/reminder/presentation/form_launcher.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_event.dart';
@@ -11,10 +11,16 @@ import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
 import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
 
 class ReminderListTile extends StatefulWidget {
+  final List<WeekdayInfo> days;
   final ReminderModel reminder;
   final AppSettingsState settingsState;
 
-  const ReminderListTile(this.reminder, this.settingsState, {super.key});
+  const ReminderListTile(
+    this.reminder,
+    this.settingsState, {
+    super.key,
+    required this.days,
+  });
 
   @override
   _ReminderListTileState createState() => _ReminderListTileState();
@@ -80,7 +86,7 @@ class _ReminderListTileState extends State<ReminderListTile> {
                               borderRadius: BorderRadius.circular(10),
                               color:
                                   widget.reminder.reminderDays.contains(
-                                    Weekday.values[index],
+                                    widget.days[index].weekday,
                                   )
                                   ? Color(
                                       widget.settingsState.settings.activeColor,

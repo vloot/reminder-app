@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminders_app/core/shared/request_status.dart';
+import 'package:reminders_app/core/shared/weekday_info.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_bloc.dart';
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_state.dart';
 import 'package:reminders_app/features/reminder/presentation/reminders_list/reminders_list_bloc.dart';
@@ -68,6 +69,10 @@ class _RelindersListState extends State<RemindersList> {
               child: Center(child: Text(state.errorMessage ?? 'Unknown error')),
             );
           } else if (state.status == RequestStatus.done) {
+            // get correct day order
+            final days = getOrderedDays(
+              widget.settingsState.settings.startingDay,
+            );
             return SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 return Padding(
@@ -75,6 +80,7 @@ class _RelindersListState extends State<RemindersList> {
                   child: ReminderListTile(
                     state.reminders![index],
                     widget.settingsState,
+                    days: days,
                   ),
                 );
               }, childCount: state.reminders?.length ?? 0),

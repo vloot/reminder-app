@@ -5,6 +5,7 @@ import 'package:reminders_app/features/settings/domain/entities/app_settings_ent
 import 'package:reminders_app/features/settings/presentation/app_settings_bloc.dart';
 import 'package:reminders_app/features/settings/presentation/app_settings_event.dart';
 import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
+import 'package:reminders_app/features/settings/presentation/widgets/settings_toggle.dart';
 
 class SettingsPage extends StatefulWidget {
   final AppSettingsState settingsState;
@@ -15,8 +16,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  Set<AppBrightness> _selection = <AppBrightness>{AppBrightness.system};
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,67 +59,70 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     child: Builder(
                       builder: (context) {
-                        return ListTile(
-                          leading: Icon(Icons.color_lens_sharp),
-                          title: Text('Theme'),
-                          trailing: SegmentedButton<AppBrightness>(
-                            multiSelectionEnabled: false,
-                            emptySelectionAllowed: false,
-                            showSelectedIcon: false,
-                            segments: [
-                              // ButtonSegment(
-                              //   value: AppBrightness.system,
-                              //   label: Text('System'),
-                              // ),
-                              ButtonSegment(
-                                value: AppBrightness.light,
-                                label: Text('Light'),
-                              ),
-                              ButtonSegment(
-                                value: AppBrightness.dark,
-                                label: Text('Dark'),
-                              ),
-                            ],
-                            selected: _selection,
-                            onSelectionChanged:
-                                (Set<AppBrightness> newSelection) {
-                                  _selection = newSelection;
-                                  AppSettingsEntity newSettings;
+                        return Column(
+                          children: [
+                            SettingsToggle<AppBrightness>(
+                              initValue:
+                                  widget.settingsState.settings.appBrightness,
+                              segmentsMap: {
+                                AppBrightness.dark: "Dark",
+                                AppBrightness.light: "Light",
+                              },
+                              iconData: Icons.palette_sharp,
+                              settingName: "Theme",
+                              onSelectionChanged: (AppBrightness selected) {
+                                AppSettingsEntity newSettings;
+                                if (selected == AppBrightness.light) {
+                                  newSettings = AppSettingsModel
+                                      .defaultSettingsLight
+                                      .toEntity();
+                                } else if (selected == AppBrightness.dark) {
+                                  newSettings = AppSettingsModel
+                                      .defaultSettingsDark
+                                      .toEntity();
+                                } else {
+                                  Brightness systemBrightness = MediaQuery.of(
+                                    context,
+                                  ).platformBrightness;
 
-                                  final selected = _selection.first;
+                                  newSettings =
+                                      (systemBrightness == Brightness.light
+                                              ? AppSettingsModel
+                                                    .defaultSettingsLight
+                                                    .toEntity()
+                                              : AppSettingsModel
+                                                    .defaultSettingsDark
+                                                    .toEntity())
+                                          .copyWith(
+                                            appBrightness: AppBrightness.system,
+                                          );
+                                }
 
-                                  if (selected == AppBrightness.light) {
-                                    newSettings = AppSettingsModel
-                                        .defaultSettingsLight
-                                        .toEntity();
-                                  } else if (selected == AppBrightness.dark) {
-                                    newSettings = AppSettingsModel
-                                        .defaultSettingsDark
-                                        .toEntity();
-                                  } else {
-                                    Brightness systemBrightness = MediaQuery.of(
-                                      context,
-                                    ).platformBrightness;
-
-                                    newSettings =
-                                        (systemBrightness == Brightness.light
-                                                ? AppSettingsModel
-                                                      .defaultSettingsLight
-                                                      .toEntity()
-                                                : AppSettingsModel
-                                                      .defaultSettingsDark
-                                                      .toEntity())
-                                            .copyWith(
-                                              appBrightness:
-                                                  AppBrightness.system,
-                                            );
-                                  }
-
-                                  context.read<AppSettingsBloc>().add(
-                                    UpdateAppSettings(newSettings),
-                                  );
-                                },
-                          ),
+                                context.read<AppSettingsBloc>().add(
+                                  UpdateAppSettings(newSettings),
+                                );
+                              },
+                            ),
+                            SettingsToggle<StartingDay>(
+                              initValue:
+                                  widget.settingsState.settings.startingDay,
+                              segmentsMap: {
+                                StartingDay.monday: "Monday",
+                                StartingDay.sunday: "Sunday",
+                              },
+                              iconData: Icons.calendar_today_sharp,
+                              settingName: "First day",
+                              onSelectionChanged: (selected) {
+                                context.read<AppSettingsBloc>().add(
+                                  UpdateAppSettings(
+                                    widget.settingsState.settings.copyWith(
+                                      startingDay: selected,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         );
                       },
                     ),
