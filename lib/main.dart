@@ -11,8 +11,8 @@ void main() async {
   await setupDI();
 
   runApp(
-    BlocProvider(
-      create: (_) => getIt<AppSettingsBloc>(),
+    MultiBlocProvider(
+      providers: [BlocProvider(create: (_) => getIt<AppSettingsBloc>())],
       child: BlocBuilder<AppSettingsBloc, AppSettingsState>(
         builder: (context, state) {
           return MaterialApp(
