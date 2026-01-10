@@ -4,4 +4,5 @@ class AppSettingsKeys {
   static const startingDay = 'startingDay';
   static const timeFormat = 'timeFormat';
   static const themeSettings = 'themeSettings';
+  static const locale = 'locale';
 }

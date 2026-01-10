@@ -12,6 +12,7 @@ import 'package:reminders_app/features/settings/presentation/app_settings_event.
 import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
 import 'package:reminders_app/features/settings/presentation/widgets/settings_section.dart';
 import 'package:reminders_app/features/settings/presentation/widgets/settings_toggle.dart';
+import 'package:reminders_app/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -29,13 +30,14 @@ class _SettingsPageState extends State<SettingsPage> {
     return BlocBuilder<AppSettingsBloc, AppSettingsState>(
       bloc: context.read<AppSettingsBloc>(),
       builder: (context, settingsState) {
+        final l10n = AppLocalizations.of(context)!;
         return Scaffold(
           appBar: AppBar(
             iconTheme: IconThemeData(
               color: Color(settingsState.settings.theme.secondaryColor),
             ),
             title: Text(
-              'Settings',
+              l10n.settingsTitle,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 28,
@@ -57,17 +59,17 @@ class _SettingsPageState extends State<SettingsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SettingsSection(
-                      sectionTitle: 'Customization',
+                      sectionTitle: l10n.settingsCustomization,
                       settingsState: settingsState,
                       settingsEntries: [
                         SettingsToggle<AppBrightness>(
                           initValue: settingsState.settings.appBrightness,
                           segmentsMap: {
-                            AppBrightness.dark: "Dark",
-                            AppBrightness.light: "Light",
+                            AppBrightness.dark: l10n.themeDark,
+                            AppBrightness.light: l10n.themeLight,
                           },
                           iconData: Icons.palette_sharp,
-                          settingName: "Theme",
+                          settingName: l10n.settingsTheme,
                           onSelectionChanged: (AppBrightness selected) {
                             context.read<AppSettingsBloc>().add(
                               UpdateAppSettings(
@@ -85,28 +87,38 @@ class _SettingsPageState extends State<SettingsPage> {
                             );
                           },
                         ),
-                        SettingsToggle<StartingDay>(
-                          initValue: settingsState.settings.startingDay,
-                          segmentsMap: {
-                            StartingDay.monday: "Monday",
-                            StartingDay.sunday: "Sunday",
-                          },
-                          iconData: Icons.calendar_today_sharp,
-                          settingName: "First day",
-                          onSelectionChanged: (selected) {
-                            var newSettings = settingsState.settings.copyWith(
-                              startingDay: selected,
-                            );
-                            context.read<AppSettingsBloc>().add(
-                              UpdateAppSettings(newSettings),
+                        Builder(
+                          builder: (context) {
+                            var mon = l10n.monday;
+                            var sun = l10n.sunday;
+                            if (mon.length > 6 || sun.length > 6) {
+                              mon = l10n.mondayAbbr.toUpperCase();
+                              sun = l10n.sundayAbbr.toUpperCase();
+                            }
+
+                            return SettingsToggle<StartingDay>(
+                              initValue: settingsState.settings.startingDay,
+                              segmentsMap: {
+                                StartingDay.monday: mon,
+                                StartingDay.sunday: sun,
+                              },
+                              iconData: Icons.calendar_today_sharp,
+                              settingName: l10n.settingsFirstDay,
+                              onSelectionChanged: (selected) {
+                                var newSettings = settingsState.settings
+                                    .copyWith(startingDay: selected);
+                                context.read<AppSettingsBloc>().add(
+                                  UpdateAppSettings(newSettings),
+                                );
+                              },
                             );
                           },
                         ),
                         SettingsToggle<TimeFormat>(
-                          settingName: "Time format",
+                          settingName: l10n.settingsTimeFormat,
                           segmentsMap: {
-                            TimeFormat.h24: "24h",
-                            TimeFormat.h12: "12h",
+                            TimeFormat.h24: "24",
+                            TimeFormat.h12: "12",
                           },
                           iconData: Icons.av_timer_sharp,
                           onSelectionChanged: (selected) {
@@ -120,29 +132,53 @@ class _SettingsPageState extends State<SettingsPage> {
                           },
                           initValue: settingsState.settings.timeFormat,
                         ),
+                        ListTile(
+                          leading: Icon(Icons.translate_sharp),
+                          title: Text(l10n.settingsLang),
+                          trailing: DropdownButton(
+                            value: settingsState.settings.locale,
+                            items: [
+                              DropdownMenuItem(
+                                value: Locale('en'),
+                                child: Text('English'),
+                              ),
+                              DropdownMenuItem(
+                                value: Locale('uk'),
+                                child: Text('Українська'),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              if (value != null) {
+                                context.read<AppSettingsBloc>().add(
+                                  LocaleChanged(value),
+                                );
+                              }
+                            },
+                          ),
+                        ),
                       ],
                     ),
                     SettingsSection(
-                      sectionTitle: 'About',
+                      sectionTitle: l10n.settingsAbout,
                       settingsState: settingsState,
                       settingsEntries: [
                         ListTile(
                           leading: Icon(Icons.code),
-                          title: Text('Source code'),
+                          title: Text(l10n.settingsSourceCode),
                           trailing: ElevatedButton(
                             onPressed: () async {
                               try {
                                 await launchUrl(Uri.parse(repoLink));
                               } catch (e) {
-                                print('Error $e');
+                                // TODO handdle error
                               }
                             },
-                            child: Text('Open repo'),
+                            child: Text(l10n.settingsOpenRepo),
                           ),
                         ),
                         ListTile(
                           leading: Icon(Icons.numbers_sharp),
-                          title: Text('App version'),
+                          title: Text(l10n.settingsAppVersion),
                           trailing: FutureBuilder<AppInfo>(
                             future: appInfoService.load(),
                             builder: (context, snapshot) {

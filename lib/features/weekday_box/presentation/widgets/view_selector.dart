@@ -6,6 +6,7 @@ import 'package:reminders_app/features/reminder/presentation/reminders_list/remi
 import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
 import 'package:reminders_app/features/weekday_box/presentation/cubit/reminder_mode_cubit.dart';
 import 'package:reminders_app/features/weekday_box/presentation/cubit/selected_days_cubit.dart';
+import 'package:reminders_app/l10n/app_localizations.dart';
 
 class ViewSelector extends StatelessWidget {
   final Weekday today;
@@ -18,6 +19,7 @@ class ViewSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final mode = context.watch<ReminderModeCubit>().state;
     return BlocBuilder<SelectedDaysCubit, SelectedDaysState>(
       builder: (context, state) {
@@ -54,7 +56,7 @@ class ViewSelector extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        selectorButton('All', () {
+                        selectorButton(l10n.allReminders, () {
                           if (mode == ReminderMode.all) return;
 
                           context.read<SelectedDaysCubit>().clearSelection();
@@ -65,7 +67,7 @@ class ViewSelector extends StatelessWidget {
                             GetRemindersListEvent(),
                           );
                         }, mode == ReminderMode.all),
-                        selectorButton('Selected only', () {
+                        selectorButton(l10n.selectedOnly, () {
                           if (mode == ReminderMode.selected) return;
 
                           context.read<ReminderModeCubit>().viewSelected();

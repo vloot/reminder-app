@@ -1,24 +1,59 @@
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
+import 'package:reminders_app/l10n/app_localizations.dart';
 
 class WeekdayInfo {
   final Weekday weekday;
+  final String name;
+  final String abbr;
 
-  String fullName() => weekday.name;
-  String abbreviation() => weekday.name.substring(0, 3);
-  String firstLetter() => weekday.name[0].toUpperCase();
+  String fullName() => name;
+  String abbreviation() => abbr;
+  String firstLetter() => name[0].toUpperCase();
 
-  WeekdayInfo({required this.weekday});
+  WeekdayInfo({required this.weekday, required this.name, required this.abbr});
 }
 
-var weekdaysInfo = <WeekdayInfo>[
-  WeekdayInfo(weekday: Weekday.monday),
-  WeekdayInfo(weekday: Weekday.tuesday),
-  WeekdayInfo(weekday: Weekday.wednesday),
-  WeekdayInfo(weekday: Weekday.thursday),
-  WeekdayInfo(weekday: Weekday.friday),
-  WeekdayInfo(weekday: Weekday.saturday),
-  WeekdayInfo(weekday: Weekday.sunday),
-];
+var weekdaysInfo = <WeekdayInfo>[];
+
+void createWeekdays(AppLocalizations l10n) {
+  weekdaysInfo = [
+    WeekdayInfo(
+      weekday: Weekday.monday,
+      name: l10n.monday,
+      abbr: l10n.mondayAbbr,
+    ),
+    WeekdayInfo(
+      weekday: Weekday.tuesday,
+      name: l10n.tuesday,
+      abbr: l10n.tuesdayAbbr,
+    ),
+    WeekdayInfo(
+      weekday: Weekday.wednesday,
+      name: l10n.wednesday,
+      abbr: l10n.wednesdayAbbr,
+    ),
+    WeekdayInfo(
+      weekday: Weekday.thursday,
+      name: l10n.thursday,
+      abbr: l10n.thursdayAbbr,
+    ),
+    WeekdayInfo(
+      weekday: Weekday.friday,
+      name: l10n.friday,
+      abbr: l10n.fridayAbbr,
+    ),
+    WeekdayInfo(
+      weekday: Weekday.saturday,
+      name: l10n.saturday,
+      abbr: l10n.saturdayAbbr,
+    ),
+    WeekdayInfo(
+      weekday: Weekday.sunday,
+      name: l10n.sunday,
+      abbr: l10n.sundayAbbr,
+    ),
+  ];
+}
 
 List<WeekdayInfo> getOrderedDays(StartingDay startingDay) {
   final startIndex = startingDay == StartingDay.monday ? 0 : 6; // sunday index

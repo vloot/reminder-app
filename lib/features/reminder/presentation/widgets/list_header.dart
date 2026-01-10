@@ -5,6 +5,7 @@ import 'package:reminders_app/features/reminder/presentation/reminder/reminder_b
 import 'package:reminders_app/features/reminder/presentation/reminder/reminder_event.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
 import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
+import 'package:reminders_app/l10n/app_localizations.dart';
 
 class ListHeader extends StatefulWidget {
   final AppSettingsState settingsState;
@@ -17,6 +18,7 @@ class ListHeader extends StatefulWidget {
 class _ListHeaderState extends State<ListHeader> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return SliverToBoxAdapter(
       child: SizedBox(
         height: 40,
@@ -29,7 +31,7 @@ class _ListHeaderState extends State<ListHeader> {
             showReminderForm(
               context,
               ReminderFormType.add,
-              'Add',
+              l10n.addReminder,
               widget.settingsState,
               submitCallback: (reminderModel) async {
                 context.read<ReminderBloc>().add(
@@ -50,7 +52,7 @@ class _ListHeaderState extends State<ListHeader> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Add reminder',
+                  l10n.addReminder,
                   style: TextStyle(
                     color: Color(widget.settingsState.settings.theme.textColor),
                     fontSize: 20,

@@ -10,6 +10,7 @@ import 'package:reminders_app/features/reminder/presentation/reminders_list/remi
 import 'package:reminders_app/features/reminder/presentation/widgets/confirmation.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
 import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
+import 'package:reminders_app/l10n/app_localizations.dart';
 
 class ReminderListTile extends StatefulWidget {
   final List<WeekdayInfo> days;
@@ -181,13 +182,14 @@ class _ReminderListTileState extends State<ReminderListTile> {
                       children: [
                         IconButton(
                           onPressed: () {
+                            final l10n = AppLocalizations.of(context)!;
+
                             showReminderForm(
                               context,
                               ReminderFormType.edit,
-                              'Editing',
+                              l10n.editReminder,
                               widget.settingsState,
                               submitCallback: (newReminder) {
-                                // FIXME bug somewhere here, in which editing reminder breaks selection
                                 context.read<ReminderBloc>().add(
                                   EditReminderEvent(
                                     id: newReminder.id!,

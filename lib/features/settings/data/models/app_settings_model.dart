@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:reminders_app/core/shared/time_format.dart';
 import 'package:reminders_app/core/shared/weekday_info.dart';
 import 'package:reminders_app/features/settings/data/models/app_theme_model.dart';
@@ -9,12 +10,14 @@ class AppSettingsModel {
   final int timeFormatIndex;
   final int startingDayIndex;
   final AppThemeModel theme;
+  final String locale;
 
   static final defaultSettings = AppSettingsModel(
     appBrightness: AppBrightness.light.index,
     timeFormatIndex: TimeFormat.h24.index,
     startingDayIndex: StartingDay.monday.index,
     theme: AppThemeModel.defaultSettingsLight,
+    locale: "en",
   );
 
   AppSettingsModel({
@@ -22,6 +25,7 @@ class AppSettingsModel {
     required this.timeFormatIndex,
     required this.startingDayIndex,
     required this.theme,
+    required this.locale,
   });
 
   /// MODEL → ENTITY
@@ -31,6 +35,7 @@ class AppSettingsModel {
       timeFormat: TimeFormat.values[timeFormatIndex],
       startingDay: StartingDay.values[startingDayIndex],
       theme: theme.toEntity(),
+      locale: Locale(locale),
     );
   }
 
@@ -41,6 +46,7 @@ class AppSettingsModel {
       timeFormatIndex: e.timeFormat.index,
       startingDayIndex: e.startingDay.index,
       theme: AppThemeModel.fromEntity(e.theme),
+      locale: e.locale.languageCode,
     );
   }
 
@@ -50,6 +56,7 @@ class AppSettingsModel {
       AppSettingsKeys.timeFormat: timeFormatIndex,
       AppSettingsKeys.startingDay: startingDayIndex,
       AppSettingsKeys.themeSettings: theme.toJson(),
+      AppSettingsKeys.locale: locale,
     };
   }
 
@@ -61,6 +68,7 @@ class AppSettingsModel {
       theme: AppThemeModel.fromJson(
         json[AppSettingsKeys.themeSettings] as Map<String, dynamic>,
       ),
+      locale: json[AppSettingsKeys.locale],
     );
   }
 }

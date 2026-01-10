@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:reminders_app/core/shared/time_format.dart';
 import 'package:reminders_app/core/shared/weekday_info.dart';
 import 'package:reminders_app/features/settings/domain/entities/app_theme_entity.dart';
@@ -7,12 +8,14 @@ class AppSettingsEntity {
   final TimeFormat timeFormat;
   final StartingDay startingDay;
   final AppThemeEntity theme;
+  final Locale locale;
 
   AppSettingsEntity({
     required this.appBrightness,
     required this.timeFormat,
     required this.startingDay,
     required this.theme,
+    required this.locale,
   });
 
   AppSettingsEntity copyWith({
@@ -20,12 +23,14 @@ class AppSettingsEntity {
     TimeFormat? timeFormat,
     StartingDay? startingDay,
     AppThemeEntity? theme,
+    Locale? locale,
   }) {
     return AppSettingsEntity(
       appBrightness: appBrightness ?? this.appBrightness,
       timeFormat: timeFormat ?? this.timeFormat,
       startingDay: startingDay ?? this.startingDay,
       theme: theme ?? this.theme,
+      locale: locale ?? this.locale,
     );
   }
 }

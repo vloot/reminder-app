@@ -25,14 +25,12 @@ class SettingsToggle<T> extends StatefulWidget {
 }
 
 class _SettingsToggleState<T> extends State<SettingsToggle<T>> {
-  late List<ButtonSegment<T>> segments;
   late Set<T> _selection;
 
   @override
   void initState() {
     super.initState();
     _selection = <T>{widget.initValue};
-    segments = getSegments();
   }
 
   @override
@@ -54,7 +52,7 @@ class _SettingsToggleState<T> extends State<SettingsToggle<T>> {
         multiSelectionEnabled: widget.multiSelection,
         emptySelectionAllowed: widget.emptySelection,
         showSelectedIcon: false,
-        segments: segments,
+        segments: getSegments(),
         selected: _selection,
         onSelectionChanged: (Set<T> newSelection) {
           setState(() {
@@ -73,10 +71,8 @@ class _SettingsToggleState<T> extends State<SettingsToggle<T>> {
         ButtonSegment<T>(
           value: key,
           label: Container(
-            constraints: BoxConstraints(
-              minWidth: 60,
-              minHeight: double.infinity,
-            ),
+            width: 60,
+            constraints: BoxConstraints(minHeight: double.infinity),
             child: Center(
               child: Text(
                 widget.segmentsMap[key]!,

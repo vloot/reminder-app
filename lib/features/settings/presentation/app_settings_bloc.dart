@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:reminders_app/features/settings/data/models/app_settings_model.dart';
 import 'package:reminders_app/features/settings/domain/entities/app_settings_entity.dart';
@@ -12,6 +13,7 @@ class AppSettingsBloc extends Bloc<AppSettingsEvent, AppSettingsState> {
     : super(AppSettingsState(settings: settings)) {
     on<UpdateAppSettings>(_onUpdate);
     on<LoadAppSettings>(_onLoad);
+    on<LocaleChanged>(_onChangeLocale);
   }
 
   Future<void> _onLoad(
@@ -35,5 +37,14 @@ class AppSettingsBloc extends Bloc<AppSettingsEvent, AppSettingsState> {
     emit(state.copyWith(settings: event.updated, isSaving: true));
     await repo.save(event.updated);
     emit(state.copyWith(isSaving: false));
+  }
+
+  FutureOr<void> _onChangeLocale(
+    LocaleChanged event,
+    Emitter<AppSettingsState> emit,
+  ) async {
+    final updated = state.settings.copyWith(locale: event.locale);
+    emit(state.copyWith(settings: updated));
+    await repo.save(updated);
   }
 }

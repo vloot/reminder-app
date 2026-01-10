@@ -7,6 +7,7 @@ import 'package:reminders_app/features/reminder/data/model/reminder_model.dart';
 import 'package:reminders_app/features/reminder/domain/entities/weekdays_enum.dart';
 import 'package:reminders_app/features/reminder_form/reminder_form_type.dart';
 import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
+import 'package:reminders_app/l10n/app_localizations.dart';
 
 class ReminderForm extends StatefulWidget {
   final ReminderFormType formType;
@@ -64,6 +65,7 @@ class _ReminderFormState extends State<ReminderForm> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final mq = MediaQuery.of(context);
     final keyboard = mq.viewInsets.bottom;
     return AnimatedPadding(
@@ -88,7 +90,7 @@ class _ReminderFormState extends State<ReminderForm> {
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 15),
                       child: Text(
-                        '${widget.title} Reminder',
+                        widget.title,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 24,
@@ -99,7 +101,7 @@ class _ReminderFormState extends State<ReminderForm> {
                   createInput(
                     _titleController,
                     contentText: _titleController.text,
-                    hintText: 'Title',
+                    hintText: l10n.inputTitle,
                     maxLines: 1,
                     maxLength: 38,
                     autofocus: widget.formType == ReminderFormType.add,
@@ -107,7 +109,7 @@ class _ReminderFormState extends State<ReminderForm> {
                   createInput(
                     _descriptionController,
                     contentText: _descriptionController.text,
-                    hintText: 'Description',
+                    hintText: l10n.inputDescription,
                   ),
                   buildTimeInput(context),
 
@@ -132,7 +134,7 @@ class _ReminderFormState extends State<ReminderForm> {
                       ),
                     ),
                     child: Text(
-                      'Save reminder',
+                      l10n.save,
                       style: TextStyle(
                         color: Color(
                           widget.settingsState.settings.theme.secondaryColor,

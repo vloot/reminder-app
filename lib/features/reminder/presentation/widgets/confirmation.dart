@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:reminders_app/features/settings/presentation/app_settings_state.dart';
+import 'package:reminders_app/l10n/app_localizations.dart';
 
 class Confirmation extends StatelessWidget {
   final Future<void> Function() onConfirmCallback;
@@ -17,6 +18,7 @@ class Confirmation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 5),
       height: MediaQuery.of(context).copyWith().size.height * 0.22,
@@ -25,7 +27,7 @@ class Confirmation extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Delete reminder?',
+            l10n.deleteTitle,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
           ),
           Row(
@@ -33,13 +35,13 @@ class Confirmation extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               buildButton(
-                'Delete',
+                l10n.delete,
                 Color(settingsState.settings.theme.secondaryColor),
                 Color(settingsState.settings.theme.warningColor),
                 onConfirmCallback,
               ),
               buildButton(
-                'Cancel',
+                l10n.cancel,
                 Color(settingsState.settings.theme.secondaryColor),
                 Color(settingsState.settings.theme.inactiveColor),
                 onCancelCallback,
